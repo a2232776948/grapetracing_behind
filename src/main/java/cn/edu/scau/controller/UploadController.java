@@ -25,15 +25,15 @@ public class UploadController {
 
     @PostMapping("/upload")
     public String fdfsUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-
+        String fileUrl = "";
         try {
-            String fileUrl = dfsClient.uploadFile(file);
+            fileUrl = dfsClient.uploadFile(file);
             System.out.println("fileUrl:"+fileUrl);
             request.setAttribute("msg", "成功上传文件，  '" + fileUrl + "'");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "ok";
+        return fileUrl;
     }
 
 
