@@ -94,7 +94,26 @@ public class UserController {
 
     @ApiOperation("更改头像 暂时不可用")
     @PostMapping("/userface")
-    public Response updateUserface(MultipartFile file, Integer id, Authentication authentication) {
+    public Response updateUserface(@RequestBody MultipartFile file,  Integer id, Authentication authentication) {
+        int n;
+        System.out.println("id="+id);
+        String name = file.getName();
+        File file1 = new File(name);
+        try (InputStream inputStream = file.getInputStream(); FileOutputStream outputStream = new FileOutputStream(file1)) {
+            byte[] bytes = new byte[4096];
+            while ((n = inputStream.read(bytes, 0, 4096)) != -1) {
+                outputStream.write(bytes, 0, n);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] buffer = new byte[4096];
+        return Response.ok("修改成功");
+    }
+
+    @ApiOperation("更改头像 暂时不可用")
+    @PostMapping("/userface1")
+    public Response updateUserface(@RequestBody MultipartFile file, Authentication authentication) {
         int n;
         String name = file.getName();
         File file1 = new File(name);
