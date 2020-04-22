@@ -6,8 +6,12 @@ import cn.edu.scau.model.SearchTreeForm;
 import cn.edu.scau.model.Tree;
 import cn.edu.scau.model.TreeCategory;
 import cn.edu.scau.service.ITreeService;
+import cn.edu.scau.util.FastDFSClientUtil;
+import cn.edu.scau.util.qrcode.QRCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +23,9 @@ public class TreeServiceImpl implements ITreeService {
 
     @Autowired
     private AreaDao areaDao;
+
+    @Autowired
+    private FastDFSClientUtil dfsClient;
 
     @Override
     public List<Tree> getAllTrees() {
@@ -94,5 +101,17 @@ public class TreeServiceImpl implements ITreeService {
             trees = new ArrayList<>();
         }
         return trees;
+    }
+
+    @Override
+    public String getTreeQRCode(Integer id) throws Exception {
+        MultipartFile multipartFile = null;
+        String basePath = ResourceUtils.getURL("classpath:").getPath();
+        String fullPath = basePath + "static/tree.jpg";
+        String info = "treeId=" + String.valueOf(id);
+        multipartFile = QRCodeUtil.encodeToMultipartFile(info, fullPath, true);
+
+        String fileUrl = dfsClient.uploadFile(multipartFile);
+        return fileUrl;
     }
 }

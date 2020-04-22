@@ -1,3 +1,5 @@
 spring:
   profiles:
     active: dev
+
+goodsQRIdBase: localhost:8080/#/GoodsQR?goodsId=

@@ -1,6 +1,7 @@
 package cn.edu.scau.controller;
 
 import cn.edu.scau.util.FastDFSClientUtil;
+import cn.edu.scau.util.qrcode.QRCodeUtil;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -95,5 +96,10 @@ public class UploadController {
         return "ok";
     }
 
-
+    @GetMapping("/getAreaQRCode")
+    public MultipartFile getAreaQRCode() throws Exception {
+        String test = "qwer";
+        String imagePath="D:/珠海项目/葡萄溯源/grape_trace20200408/test1/262.jpg";
+        return QRCodeUtil.encodeToMultipartFile(test,imagePath,true);
+    }
 }

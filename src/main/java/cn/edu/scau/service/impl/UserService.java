@@ -91,4 +91,8 @@ public class UserService implements UserDetailsService {
         }
         return false;
     }
+
+    public boolean updateUserface(Integer id, String userface){
+        return userDao.updateUserface(userface,id) == 1;
+    }
 }

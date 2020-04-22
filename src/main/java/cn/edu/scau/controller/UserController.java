@@ -1,12 +1,15 @@
 package cn.edu.scau.controller;
 
+import cn.edu.scau.model.Role;
 import cn.edu.scau.model.User;
 import cn.edu.scau.service.IRoleService;
 import cn.edu.scau.service.impl.UserService;
+import cn.edu.scau.util.FastDFSClientUtil;
 import cn.edu.scau.util.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +27,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    @Autowired
+    private FastDFSClientUtil dfsClient;
 
     @Autowired
     private UserService userService;
@@ -31,22 +36,25 @@ public class UserController {
     @Autowired
     private IRoleService roleServiceImpl;
 
+    @Value("${fdfs.reqBaseUrl}")
+    private String reqBaseUrl;  //nginx的ip+端口号
+
     @ApiOperation("获取所有用户信息")
     @GetMapping("/getAllUsers")
-    public Response getAllUsers() {
+    public Response<List<User>> getAllUsers() {
         List<User> allUsers = userService.getAllUsers();
         return Response.ok("查找成功", allUsers);
     }
 
     @ApiOperation("根据用户名模糊查询")
     @GetMapping("/getUserByKeywords")
-    public Response getUserByKeywords(String keywords) {
+    public Response<List<User>> getUserByKeywords(String keywords) {
         return Response.ok("查找成功", userService.getUserByKeywords(keywords));
     }
 
     @ApiOperation("获取当前用户权限")
     @GetMapping("/getAllRoles")
-    public Response getAllRoles() {
+    public Response<List<Role>> getAllRoles() {
         return Response.ok("查找成功", roleServiceImpl.getAllRoles());
     }
 
@@ -88,32 +96,33 @@ public class UserController {
 
     @ApiOperation("获取当前登录用户信息")
     @GetMapping("/info")
-    public Response info(Authentication authentication) {
-        return Response.ok("查找成功", authentication.getPrincipal());
+    public Response<User> info(Authentication authentication) {
+         User user = (User) authentication.getPrincipal();
+         //user.setUserface(reqBaseUrl+'/'+user.getUserface());
+         return Response.ok("查找成功", user);
     }
 
     @ApiOperation("更改头像 暂时不可用")
     @PostMapping("/userface")
-    public Response updateUserface(@RequestBody MultipartFile file,  Integer id, Authentication authentication) {
-        int n;
-        System.out.println("id="+id);
-        String name = file.getName();
-        File file1 = new File(name);
-        try (InputStream inputStream = file.getInputStream(); FileOutputStream outputStream = new FileOutputStream(file1)) {
-            byte[] bytes = new byte[4096];
-            while ((n = inputStream.read(bytes, 0, 4096)) != -1) {
-                outputStream.write(bytes, 0, n);
-            }
+    public Response updateUserface(@RequestBody MultipartFile file, Authentication authentication) {
+        String fileUrl = "";
+        try {
+            fileUrl = dfsClient.uploadFile(file);
+            System.out.println("fileUrl:"+fileUrl);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        byte[] buffer = new byte[4096];
+        User user = (User) authentication.getPrincipal();
+        int i = fileUrl.indexOf("group"); // 获得路径中group出现的位置
+        fileUrl = fileUrl.substring(i);
+        System.out.println(fileUrl);
+        userService.updateUserface(user.getId(),fileUrl);
         return Response.ok("修改成功");
     }
 
     @ApiOperation("更改头像 暂时不可用")
     @PostMapping("/userface1")
-    public Response updateUserface(@RequestBody MultipartFile file, Authentication authentication) {
+    public Response updateUserface(@RequestBody MultipartFile file,int i, Authentication authentication) {
         int n;
         String name = file.getName();
         File file1 = new File(name);

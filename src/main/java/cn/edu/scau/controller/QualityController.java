@@ -28,7 +28,7 @@ public class QualityController {
 
     @ApiOperation("获取所有质检信息")
     @GetMapping("/getAllQuality")
-    public Response getAllQuality(){
+    public Response<List<Quality>> getAllQuality(){
         return Response.ok("获取成功", qualityService.getAllQuality());
     }
 
@@ -52,7 +52,7 @@ public class QualityController {
 
     @ApiOperation("根据id获取质检信息")
     @GetMapping("/getQualityById")
-    public Response getQualityById(long id){
+    public Response<List<Quality>> getQualityById(long id){
         return Response.ok("查找成功", qualityService.getQualityById(id));
     }
 }

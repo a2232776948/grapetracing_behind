@@ -1,6 +1,7 @@
 package cn.edu.scau.controller;
 
 import cn.edu.scau.model.FarmOP;
+import cn.edu.scau.model.FarmOPCategory;
 import cn.edu.scau.model.SearchFarmOPForm;
 import cn.edu.scau.service.IFarmOPService;
 import cn.edu.scau.service.impl.FarmOPServiceImpl;
@@ -23,20 +24,20 @@ public class FarmOPController {
 
     @ApiOperation("获取所有农事操作")
     @GetMapping("/getAllOps")
-    public Response getAllOps(){
+    public Response<List<FarmOP>> getAllOps(){
         return Response.ok("查找成功", farmOPServiceImpl.getAllOPs());
     }
 
     @ApiOperation("按条件搜索植株")
     @PostMapping("/findFarmOPs")
-    public Response findFarmOPs(@RequestBody SearchFarmOPForm form){
+    public Response<List<FarmOP>> findFarmOPs(@RequestBody SearchFarmOPForm form){
         System.out.println(form);
         return Response.ok("查找成功", farmOPServiceImpl.findFarmOPs(form));
     }
 
     @ApiOperation("获取农事操作种类")
     @GetMapping("/getAllFarmCate")
-    public Response getAllFarmCate(){
+    public Response<List<FarmOPCategory>> getAllFarmCate(){
         return Response.ok("查找成功", farmOPServiceImpl.getAllFarmCate());
     }
 

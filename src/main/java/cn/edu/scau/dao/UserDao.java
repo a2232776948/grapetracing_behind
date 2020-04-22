@@ -132,4 +132,5 @@ public interface UserDao {
     @Insert("insert into user(name, phone, age, detail, date, gender, username, password, userface, enabled, hash) " +
             "values(#{name}, #{phone}, #{age}, #{detail}, #{date, jdbcType=DATE}, #{gender}, #{username}, #{password}, #{userface}, #{enabled}, #{hash})")
     int insertUser(User user);
+
 }

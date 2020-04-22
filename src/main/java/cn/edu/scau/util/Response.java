@@ -3,10 +3,10 @@ package cn.edu.scau.util;
 import lombok.Data;
 
 @Data
-public class Response {
+public class Response<T> {
     private Integer status;
     private String msg;
-    private Object result;
+    private T result;
 
     public static Response build() {
         return new Response();
@@ -31,7 +31,7 @@ public class Response {
     private Response() {
     }
 
-    private Response(Integer status, String msg, Object result) {
+    private Response(Integer status, String msg, T result) {
         this.status = status;
         this.msg = msg;
         this.result = result;

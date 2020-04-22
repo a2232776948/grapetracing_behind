@@ -4,8 +4,12 @@ import cn.edu.scau.dao.AreaDao;
 import cn.edu.scau.dao.TreeDao;
 import cn.edu.scau.model.Area;
 import cn.edu.scau.service.IAreaService;
+import cn.edu.scau.util.FastDFSClientUtil;
+import cn.edu.scau.util.qrcode.QRCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,6 +21,9 @@ public class AreaServiceImpl implements IAreaService {
 
     @Autowired
     private TreeDao treeDao;
+
+    @Autowired
+    private FastDFSClientUtil dfsClient;
 
     @Override
     public List<Area> getAllArea() {
@@ -43,5 +50,17 @@ public class AreaServiceImpl implements IAreaService {
     @Override
     public void changeAreaInfo(Area area) {
         areaDao.updateOne(area);
+    }
+
+    @Override
+    public String getAreaQRCode(Integer id) throws Exception {
+        MultipartFile multipartFile = null;
+        String basePath = ResourceUtils.getURL("classpath:").getPath();
+        String fullPath = basePath + "static/area.jpg";
+        String info = "areaId=" + String.valueOf(id);
+        multipartFile = QRCodeUtil.encodeToMultipartFile(info, fullPath, true);
+
+        String fileUrl = dfsClient.uploadFile(multipartFile);
+        return fileUrl;
     }
 }

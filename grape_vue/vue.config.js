@@ -8,7 +8,7 @@ let proxyObj = {};
 // };
 proxyObj['/'] = {
     ws: false,
-    // target: 'http://193.112.178.124:8081/',
+     //target: 'http://193.112.178.124:8081/',
     target: 'http://127.0.0.1:8081/',
     changeOrigin: true,
     pathRewrite: {

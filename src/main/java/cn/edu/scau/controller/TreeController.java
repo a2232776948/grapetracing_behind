@@ -2,6 +2,7 @@ package cn.edu.scau.controller;
 
 import cn.edu.scau.model.SearchTreeForm;
 import cn.edu.scau.model.Tree;
+import cn.edu.scau.model.TreeCategory;
 import cn.edu.scau.service.ITreeService;
 import cn.edu.scau.util.Response;
 import io.swagger.annotations.Api;
@@ -23,13 +24,13 @@ public class TreeController {
 
     @ApiOperation("获取所有植株")
     @RequestMapping(value = "/getAllTrees", method = RequestMethod.GET)
-    public Response getAllTrees() {
+    public Response<List<Tree>> getAllTrees() {
         return Response.ok("获取成功", ITreeService.getAllTrees());
     }
 
     @ApiOperation("获取植株种类")
     @RequestMapping(value = "/getAllCategory", method = RequestMethod.GET)
-    public Response getAllCategory() {
+    public Response<List<TreeCategory>> getAllCategory() {
         return Response.ok("获取成功", ITreeService.getAllCategory());
     }
 
@@ -56,9 +57,22 @@ public class TreeController {
 
     @ApiOperation("按条件搜索植株")
     @RequestMapping(value = "/findTrees", method = RequestMethod.POST)
-    public Response findTrees(@RequestBody SearchTreeForm form) {
+    public Response<List<Tree>> findTrees(@RequestBody SearchTreeForm form) {
         System.out.println(form);
         List<Tree> trees = ITreeService.findTrees(form);
         return Response.ok(trees.size() > 0 ? "搜索成功" : "植株不存在", trees);
+    }
+
+    @ApiOperation("导出植株二维码")
+    @RequestMapping(value = "getTreeQRcode",method = RequestMethod.GET)
+    public Response<String> getTreeQRcode(Integer id) {
+        String treeQRCode = null;
+        try {
+            treeQRCode = ITreeService.getTreeQRCode(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error(e.getMessage());
+        }
+        return Response.ok("导出成功",treeQRCode);
     }
 }

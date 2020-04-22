@@ -19,4 +19,6 @@ public interface ITreeService {
     void editTree(Tree tree);
 
     List<Tree> findTrees(SearchTreeForm tree);
+
+    public String getTreeQRCode(Integer id) throws Exception;
 }

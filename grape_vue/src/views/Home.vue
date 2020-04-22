@@ -75,6 +75,9 @@
     export default {
         name: "Home",
         components: {Tips, Weather, Card},
+        data(){
+
+        },
         computed: {
             routes() {
                 return this.$store.state.routes;
