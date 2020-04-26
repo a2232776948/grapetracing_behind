@@ -60,7 +60,7 @@ public interface MenuDao {
     List<Integer> getMidsByRid(Integer rid);
 
     @ResultType(Meta.class)
-    @Select("select keepAlive, requireAuth from Menu where id = #{id}")
+    @Select("select keepAlive, requireAuth from menu where id = #{id}")
     Meta selectMetaByPrimaryKey(Integer id);
 //
 //    @Select("SELECT m.* FROM menu m, menu_role mr, user_role ur " +

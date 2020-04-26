@@ -1,6 +1,7 @@
 package cn.edu.scau.controller;
 
 import cn.edu.scau.model.AddGoodsForm;
+import cn.edu.scau.model.AreaGoodsCount;
 import cn.edu.scau.model.Goods;
 import cn.edu.scau.model.GoodsQRcode;
 import cn.edu.scau.service.IGoodsService;
@@ -8,10 +9,7 @@ import cn.edu.scau.util.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -20,6 +18,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/goods")
 public class GoodsController {
+
+    //这里一个商品的id就是二维码的id
     @Autowired
     private IGoodsService goodsService;
 
@@ -43,10 +43,24 @@ public class GoodsController {
         return Response.ok("添加成功");
     }
 
-    @ApiOperation("批量删除商品，尚未实现")
+    @ApiOperation("批量删除商品")
     @RequestMapping(value = "deleteGoods",method = RequestMethod.POST)
     public Response deleteGoods(@RequestBody List<Integer> ids){
         return Response.ok("删除成功");
+    }
+
+    @ApiOperation("获取所有地块的葡萄商品的数量")
+    @RequestMapping(value = "getAreaGoodsCount",method = RequestMethod.GET)
+    public Response<AreaGoodsCount> getAreaGoodsCount(){
+        List<AreaGoodsCount> areaGoodsCount = goodsService.getAreaGoodsCount();
+        return Response.ok("获取成功",areaGoodsCount);
+    }
+
+    @ApiOperation("根据普通商品Id获取葡萄商品")
+    @GetMapping("getGoodsById")
+    public Response<Long> getGoodsById(long id){
+        Goods goodsById = goodsService.getGoodsById(id);
+        return Response.ok("获取成功",goodsById);
     }
 
     @ApiOperation("获取商品的二维码")

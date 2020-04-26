@@ -139,7 +139,8 @@ public class QRCodeUtil {
     }
 
     public static void encode(String content, String imgPath, String destPath) throws Exception {
-        QRCodeUtil.encode(content, imgPath, destPath, false);
+        //QRCodeUtil.encode(content, imgPath, destPath, false);
+        QRCodeUtil.encode(content, imgPath, destPath, true);
     }
     // 被注释的方法
     /*

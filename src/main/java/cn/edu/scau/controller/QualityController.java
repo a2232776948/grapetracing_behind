@@ -55,4 +55,11 @@ public class QualityController {
     public Response<List<Quality>> getQualityById(long id){
         return Response.ok("查找成功", qualityService.getQualityById(id));
     }
+
+    @ApiOperation("根据goodsId获取质检信息")
+    @GetMapping("getQualityByGoodsId")
+    public Response<List<Quality>> getQualityByGoodsId(long id){
+        List<Quality> qualityByGoodsId = qualityService.getQualityByGoodsId(id);
+        return Response.ok("获取成功",qualityByGoodsId);
+    }
 }

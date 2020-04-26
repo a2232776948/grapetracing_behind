@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Api(tags = "植株")
@@ -63,16 +64,15 @@ public class TreeController {
         return Response.ok(trees.size() > 0 ? "搜索成功" : "植株不存在", trees);
     }
 
-    @ApiOperation("导出植株二维码")
+    @ApiOperation("导出某个植株二维码")
     @RequestMapping(value = "getTreeQRcode",method = RequestMethod.GET)
-    public Response<String> getTreeQRcode(Integer id) {
-        String treeQRCode = null;
+    public Response<String> getTreeQRcode(long id, HttpServletResponse response) {
         try {
-            treeQRCode = ITreeService.getTreeQRCode(id);
+            ITreeService.getTreeQRCode(id, response);
         } catch (Exception e) {
             e.printStackTrace();
             return Response.error(e.getMessage());
         }
-        return Response.ok("导出成功",treeQRCode);
+        return Response.ok("导出成功");
     }
 }

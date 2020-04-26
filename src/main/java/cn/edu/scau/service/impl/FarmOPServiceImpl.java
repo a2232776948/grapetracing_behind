@@ -3,10 +3,7 @@ package cn.edu.scau.service.impl;
 import cn.edu.scau.dao.FarmOPDao;
 import cn.edu.scau.dao.TreeDao;
 import cn.edu.scau.dao.UserDao;
-import cn.edu.scau.model.FarmOP;
-import cn.edu.scau.model.FarmOPCategory;
-import cn.edu.scau.model.SearchFarmOPForm;
-import cn.edu.scau.model.Tree;
+import cn.edu.scau.model.*;
 import cn.edu.scau.service.IFarmOPService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +28,16 @@ public class FarmOPServiceImpl implements IFarmOPService {
 
     public List<FarmOPCategory> getAllFarmCate() {
         return farmOPDao.selectAllFarmCate();
+    }
+
+    @Override
+    public List<AreaFarmOPCount> selectAreaFarmOPCount() {
+        return farmOPDao.selectAreaFarmOPCount();
+    }
+
+    @Override
+    public List<YearFarmopCount> selectYearFarmopCount(long year) {
+        return farmOPDao.selectYearFarmopCount(year);
     }
 
     public boolean addOneFarmopForArea(FarmOP farmOP) {

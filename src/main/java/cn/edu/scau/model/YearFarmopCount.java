@@ -6,16 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel
-public class Goods {
-    private long id;
-    private long treeId;
-    private Date date;
-    @ApiModelProperty(value = "添加的数量")
-    private int count=1;
+public class YearFarmopCount {
+    private long month;
+    @ApiModelProperty(value = "农事操作次数")
+    private long count;
 }

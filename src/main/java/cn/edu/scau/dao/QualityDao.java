@@ -42,4 +42,17 @@ public interface QualityDao {
     @ResultMap("quality")
     @Select("select * from quality where id = #{id}")
     Quality selectOneById(long id);
+
+    @Select("SELECT\n" +
+            "quality.id,\n" +
+            "quality.goods_id,\n" +
+            "quality.category,\n" +
+            "quality.description,\n" +
+            "quality.date,\n" +
+            "quality.user_id\n" +
+            "FROM\n" +
+            "quality\n" +
+            "WHERE\n" +
+            "quality.goods_id = #{id}\n")
+    List<Quality> getQualityByGoodsId(long id);
 }

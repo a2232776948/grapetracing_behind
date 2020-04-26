@@ -1,9 +1,6 @@
 package cn.edu.scau.dao;
 
-import cn.edu.scau.model.FarmOP;
-import cn.edu.scau.model.FarmOPCategory;
-import cn.edu.scau.model.SearchFarmOPForm;
-import io.swagger.models.auth.In;
+import cn.edu.scau.model.*;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.stereotype.Repository;
@@ -100,4 +97,10 @@ public interface FarmOPDao {
             "and date <= #{end_date, jdbcType=DATE} and tree_id = #{tree_id} " +
             "and user_id = #{user_id}")
     List<FarmOP> selectManyByPeriodAndTreeIdAndUserId(Date start_date, Date end_date, long tree_id, int user_id);
+
+    @Select("SELECT area_id,area.`name`,COUNT(area_id) count from farmop,area  WHERE area.id=farmop.area_id group by area_id")
+    List<AreaFarmOPCount> selectAreaFarmOPCount();
+
+    @Select(" SELECT DATE_FORMAT(date,'%m') AS month,COUNT(*) count FROM farmop WHERE YEAR(date) = #{year} GROUP BY DATE_FORMAT(date,'%m')")
+    List<YearFarmopCount> selectYearFarmopCount(long year);
 }

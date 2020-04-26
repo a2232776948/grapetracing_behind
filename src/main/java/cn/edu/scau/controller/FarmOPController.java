@@ -1,12 +1,10 @@
 package cn.edu.scau.controller;
 
-import cn.edu.scau.model.FarmOP;
-import cn.edu.scau.model.FarmOPCategory;
-import cn.edu.scau.model.SearchFarmOPForm;
+import cn.edu.scau.model.*;
 import cn.edu.scau.service.IFarmOPService;
-import cn.edu.scau.service.impl.FarmOPServiceImpl;
 import cn.edu.scau.util.Response;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +26,7 @@ public class FarmOPController {
         return Response.ok("查找成功", farmOPServiceImpl.getAllOPs());
     }
 
-    @ApiOperation("按条件搜索植株")
+    @ApiOperation("按条件搜索农事操作")
     @PostMapping("/findFarmOPs")
     public Response<List<FarmOP>> findFarmOPs(@RequestBody SearchFarmOPForm form){
         System.out.println(form);
@@ -40,6 +38,22 @@ public class FarmOPController {
     public Response<List<FarmOPCategory>> getAllFarmCate(){
         return Response.ok("查找成功", farmOPServiceImpl.getAllFarmCate());
     }
+
+    @ApiOperation("获取所有地块的农事次数")
+    @RequestMapping(value = "getAreaFarmopCount",method = RequestMethod.GET)
+    public Response<List<AreaFarmOPCount>> getAreaFarmopCount(){
+        List<AreaFarmOPCount> areaFarmOPCounts = farmOPServiceImpl.selectAreaFarmOPCount();
+        return Response.ok("获取成功",areaFarmOPCounts);
+    }
+
+    @ApiOperation("按年份获取农事操作次数")
+    @ApiImplicitParam(name = "year",example = "2019")
+    @RequestMapping(value = "getYearFarmopCount",method = RequestMethod.GET)
+    public Response<List<YearFarmopCount>> getYearFarmopCount(long year){
+        List<YearFarmopCount> yearFarmopCounts = farmOPServiceImpl.selectYearFarmopCount(year);
+        return Response.ok("获取成功",yearFarmopCounts);
+    }
+
 
     @ApiOperation("通过地块添加农事操作")
     @PostMapping("/insertOneFarmopForArea")

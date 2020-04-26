@@ -72,4 +72,18 @@ public class GoodsServiceImpl implements IGoodsService {
 
         return fileUrl;
     }
+
+    @Override
+    public List<AreaGoodsCount> getAreaGoodsCount() {
+        List<AreaGoodsCount> areaGoodsCount = goodsDao.getAreaGoodsCount();
+        return areaGoodsCount;
+    }
+
+    @Override
+    public Goods getGoodsById(long id) {
+        Goods goods = goodsDao.selectGoodsById(id);
+        return goods;
+    }
+
+
 }

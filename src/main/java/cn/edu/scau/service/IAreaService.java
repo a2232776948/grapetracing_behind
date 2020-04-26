@@ -3,6 +3,7 @@ package cn.edu.scau.service;
 import cn.edu.scau.model.Area;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
@@ -16,5 +17,9 @@ public interface IAreaService {
 
     void changeAreaInfo(Area area);
 
-    String getAreaQRCode(Integer id) throws Exception;
+    boolean getAreaQRCode(long id,HttpServletResponse response) throws Exception;
+
+    String getAreaQRCodes(long[] ids, HttpServletResponse response) throws Exception;
+
+    //boolean getAreaQRCodes(long[] ids) throws Exception;
 }

@@ -45,4 +45,9 @@ public class QualityServiceImpl implements IQualityService {
         qualities.add(qualityDao.selectOneById(id));
         return qualities;
     }
+
+    @Override
+    public List<Quality> getQualityByGoodsId(long id) {
+        return qualityDao.getQualityByGoodsId(id);
+    }
 }

@@ -4,6 +4,7 @@ import cn.edu.scau.model.SearchTreeForm;
 import cn.edu.scau.model.Tree;
 import cn.edu.scau.model.TreeCategory;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface ITreeService {
@@ -20,5 +21,5 @@ public interface ITreeService {
 
     List<Tree> findTrees(SearchTreeForm tree);
 
-    public String getTreeQRCode(Integer id) throws Exception;
+    public boolean getTreeQRCode(long id, HttpServletResponse response) throws Exception;
 }

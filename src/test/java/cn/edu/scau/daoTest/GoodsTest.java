@@ -1,8 +1,9 @@
 package cn.edu.scau.daoTest;
 
+import cn.edu.scau.dao.FarmOPDao;
 import cn.edu.scau.dao.GoodsDao;
-import cn.edu.scau.model.Goods;
-import cn.edu.scau.model.GoodsQRcode;
+import cn.edu.scau.dao.QualityDao;
+import cn.edu.scau.model.*;
 import cn.edu.scau.service.IGoodsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,12 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class GoodsTest {
+    @Autowired
+    private QualityDao qualityDao;
+    
+    @Autowired
+    private FarmOPDao farmOPDao;
+
     @Autowired
     private GoodsDao goodsDao;
 
@@ -55,4 +62,41 @@ public class GoodsTest {
     public void addGoodsForArea(){
         //goodsService.addGoodsForArea(2,new Date(),3);
     }
+
+    @Test
+    public void selectAreaFarmOPCount(){
+        List<AreaFarmOPCount> areaFarmOPCounts = farmOPDao.selectAreaFarmOPCount();
+        System.out.println(areaFarmOPCounts);
+    }
+
+    @Test
+    public void getFarmopCountByDate(){
+        //List<YearFarmopCount> farmopCountByDate = farmOPDao.getFarmopCountByDate(2019);
+        //System.out.println(farmopCountByDate);
+    }
+
+    @Test
+    public void getAreaGoodsCount() {
+        List<AreaGoodsCount> areaGoodsCount = goodsDao.getAreaGoodsCount();
+        System.out.println(areaGoodsCount);
+    }
+
+    @Test
+    public void getYearGoodsCount(){
+        List<YearGoodsCount> yearGoodsCounts = goodsDao.getYearGoodsCount(2020);
+        System.out.println(yearGoodsCounts);
+    }
+    
+    @Test
+    public void getQualityByGoodsId(){
+        List<Quality> qualityByGoodsId = qualityDao.getQualityByGoodsId(2);
+        System.out.println(qualityByGoodsId);
+    }
+
+    @Test
+    public void selectGoodsById(){
+        Goods goods = goodsDao.selectGoodsById(2);
+        System.out.println(goods);
+    }
+
 }

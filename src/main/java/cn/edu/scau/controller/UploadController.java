@@ -1,7 +1,10 @@
 package cn.edu.scau.controller;
 
+import cn.edu.scau.service.IAreaService;
 import cn.edu.scau.util.FastDFSClientUtil;
 import cn.edu.scau.util.qrcode.QRCodeUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,14 +13,21 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
+@Api("测试用")
 @RestController
+@RequestMapping("/upload")
 public class UploadController {
 
     @Autowired
     private FastDFSClientUtil dfsClient;
+
+    @Autowired
+    private IAreaService areaService;
 
     @RequestMapping("/")
     public String index() {
@@ -96,10 +106,89 @@ public class UploadController {
         return "ok";
     }
 
-    @GetMapping("/getAreaQRCode")
+    //@GetMapping("/getAreaQRCode")
     public MultipartFile getAreaQRCode() throws Exception {
         String test = "qwer";
         String imagePath="D:/珠海项目/葡萄溯源/grape_trace20200408/test1/262.jpg";
         return QRCodeUtil.encodeToMultipartFile(test,imagePath,true);
     }
+
+    @RequestMapping(value = "/migration",method = RequestMethod.GET)
+    public void migration(HttpServletResponse response) throws Exception {
+        String codedFileName = "EN";
+        response.setHeader("Content-Disposition", "attachment;filename=" +             codedFileName + ".jpg");
+        // 响应类型,编码
+        response.setContentType("application/octet-stream;charset=UTF-8");
+        // 形成输出流
+        OutputStream osOut = response.getOutputStream();
+        File xmlFileC = new
+                File("D:\\zhuhai_project\\grape_tracing\\grape_trace20200408\\grape_tracingback-master\\tree.jpg");
+        InputStream input = null;
+        try {
+            input = new FileInputStream(xmlFileC);
+            byte[] buf = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = input.read(buf)) > 0) {
+                osOut.write(buf, 0, bytesRead);
+            }
+        } finally {
+            input.close();
+            osOut.close();
+        }
+    }
+
+    @RequestMapping("/migration2")
+    public static void buildExcelDocument(HttpServletResponse response){
+        String filePath = "D:\\zhuhai_project\\grape_tracing\\grape_trace20200408\\grape_tracingback-master\\tree.jpg";
+        ServletOutputStream out = null;
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(new File(filePath));
+            String[] dir = filePath.split("/");
+            String fileName = dir[dir.length-1];
+            String[] array = fileName.split("[.]");
+            String fileType = array[array.length-1].toLowerCase();
+            //设置文件ContentType类型
+            if("jpg,jepg,gif,png".contains(fileType)){//图片类型
+                response.setContentType("image/"+fileType);
+            }else if("pdf".contains(fileType)){//pdf类型
+                response.setContentType("application/pdf");
+            }else{//自动判断下载文件类型
+                response.setContentType("multipart/form-data");
+            }
+            //设置文件头：最后一个参数是设置下载文件名
+            //response.setHeader("Content-Disposition", "attachment;fileName="+fileName);
+            out = response.getOutputStream();
+            // 读取文件流
+            int len = 0;
+            byte[] buffer = new byte[1024 * 10];
+            while ((len = in.read(buffer)) != -1) {
+                out.write(buffer, 0, len);
+            }
+            out.flush();
+        } catch (FileNotFoundException e) {
+            System.out.println("responseFileStream error:FileNotFoundException" + e.toString());
+        } catch (Exception e) {
+            System.out.println("responseFileStream error:" + e.toString());
+        } finally {
+            try {
+                out.close();
+                in.close();
+            } catch (NullPointerException e) {
+                System.out.println("responseFileStream stream close() error:NullPointerException" + e.toString());
+            } catch (Exception e) {
+                System.out.println("responseFileStream stream close() error:" + e.toString());
+            }
+        }
+    }
+
+    @ApiOperation("文件压缩测试")
+    @RequestMapping(value = "/getAreaQRCodeTest2",method = RequestMethod.POST)
+    public void getAreaQRCodeTest2() throws Exception {
+        long id= 3;
+        System.out.println("开始");
+        //areaService.getAreaQRCode(id);
+        System.out.println("结束");
+    }
+
 }

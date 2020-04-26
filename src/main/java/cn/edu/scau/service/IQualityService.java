@@ -15,4 +15,6 @@ public interface IQualityService {
     int updateOne(Quality quality);
 
     List<Quality> getQualityById(long id);
+
+    List<Quality> getQualityByGoodsId(long id);
 }
