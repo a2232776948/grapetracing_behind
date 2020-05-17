@@ -19,7 +19,10 @@ public interface IAreaService {
 
     boolean getAreaQRCode(long id,HttpServletResponse response) throws Exception;
 
-    String getAreaQRCodes(long[] ids, HttpServletResponse response) throws Exception;
+    String addAreaQRCodes(long[] ids) throws Exception;
+
+    boolean getAreaQRCodes(String url, HttpServletResponse response) throws Exception;
+
 
     //boolean getAreaQRCodes(long[] ids) throws Exception;
 }

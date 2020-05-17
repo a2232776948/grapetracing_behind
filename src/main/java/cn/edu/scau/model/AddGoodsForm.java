@@ -14,8 +14,10 @@ import java.util.Date;
 @NoArgsConstructor
 @ApiModel
 public class AddGoodsForm {
-    Integer areaId;
-    Date date;
+    private Integer areaId;
+    private String category;
+    private Date date;
+    private String desc;
     @ApiModelProperty(notes = "为每棵植株添加的商品的数量")
-    Integer count;
+    private Integer count;
 }

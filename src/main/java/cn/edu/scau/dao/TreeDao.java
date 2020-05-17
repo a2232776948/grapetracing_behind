@@ -138,4 +138,7 @@ public interface TreeDao {
             "from tree join area on tree.area_id = area.id " +
             "where plant_date >= #{start_date, jdbcType=DATE} and plant_date <= #{end_date, jdbcType=DATE}")
     List<Tree> selectTreeByPeriod(Date start_date, Date end_date);
+
+    @Update("update Tree set hash = #{hash} where id = #{id}")
+    int updateHashById(long id, String hash);
 }

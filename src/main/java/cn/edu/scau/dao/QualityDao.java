@@ -1,6 +1,8 @@
 package cn.edu.scau.dao;
 
+import cn.edu.scau.dao.sql_provider.QualityProvider;
 import cn.edu.scau.model.Quality;
+import cn.edu.scau.model.SearchQualityForm;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.stereotype.Repository;
@@ -16,6 +18,7 @@ public interface QualityDao {
     int insertOne(Quality quality);
 
     @Results(id = "quality", value = {
+            //@Result(column = "id", property = "id"),
             @Result(column = "id", property = "id", id = true),
             @Result(column = "goods_id", property = "goods_id", jdbcType = JdbcType.INTEGER),
             @Result(column = "category", property = "category", jdbcType = JdbcType.VARCHAR),
@@ -26,6 +29,11 @@ public interface QualityDao {
     })
     @Select("select * from quality")
     List<Quality> selectAll();
+
+    @ResultMap("quality")
+    @Select("select * from quality where goods_id=23")
+    Quality selectAllTest();
+
 
     @Select("select name from user where id = #{id}")
     String selectNameByUserId(int id);
@@ -55,4 +63,14 @@ public interface QualityDao {
             "WHERE\n" +
             "quality.goods_id = #{id}\n")
     List<Quality> getQualityByGoodsId(long id);
+
+    @ResultMap("quality")
+    @SelectProvider(type = QualityProvider.class,method = "findQualities")
+    List<Quality> findQualities(@Param("form") SearchQualityForm form);
+
+    @Select(" SELECT DISTINCT\n" +
+            "(category)\n" +
+            "FROM\n" +
+            "quality\n")
+    List<String> getQualityCate();
 }

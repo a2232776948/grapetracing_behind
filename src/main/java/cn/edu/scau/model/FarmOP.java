@@ -18,4 +18,5 @@ public class FarmOP {
     private Date date;
     private Integer user_id;
     private String opperson;
+    private boolean editable;
 }

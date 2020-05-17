@@ -1,22 +1,32 @@
 package cn.edu.scau.daoTest;
 
-import cn.edu.scau.dao.FarmOPDao;
-import cn.edu.scau.dao.GoodsDao;
-import cn.edu.scau.dao.QualityDao;
+import cn.edu.scau.dao.*;
 import cn.edu.scau.model.*;
 import cn.edu.scau.service.IGoodsService;
+import cn.edu.scau.service.LogisticService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class GoodsTest {
+
+    @Autowired
+    private LogisticService logisticService;
+
+    @Autowired
+    private LogisticDao logisticDao;
+
+    @Autowired
+    private CompanyDao companyDao;
+
     @Autowired
     private QualityDao qualityDao;
     
@@ -31,22 +41,13 @@ public class GoodsTest {
 
     @Test
     public void getAllGoods(){
-        List<GoodsQRcode> allGoods = goodsDao.getAllGoods();
-        System.out.println(allGoods);
-    }
-
-    @Test
-    public void getOneGoods(){
-        GoodsQRcode allGoods = goodsDao.getOneGoods();
+        List<Goods> allGoods = goodsDao.getAllGoods();
         System.out.println(allGoods);
     }
 
     @Test
     public void addGoodsForTree(){
-        Goods goods = new Goods();
-        Date date = new Date();
-        goods.setDate(date);
-        goods.setTreeId(3);
+        Goods goods = new Goods(0,2,"新鲜葡萄","现摘葡萄",new Date(),"100000000000003",2);
         goodsDao.addGoodsForTree(goods);
 //        goodsDao.addGoodsForTree(goods);
     }
@@ -97,6 +98,44 @@ public class GoodsTest {
     public void selectGoodsById(){
         Goods goods = goodsDao.selectGoodsById(2);
         System.out.println(goods);
+    }
+
+    @Test
+    public void getGoodsByQrId(){
+        long id = goodsDao.getGoodsByQrId("goods100000000000027");
+        System.out.println(id);
+    }
+
+    @Test
+    public void getCompany(){
+        Company company = companyDao.selectCompany();
+        System.out.println(company);
+    }
+
+    @Test
+    public void selectManyByCondition(){
+        Date date = new Date();
+        date.setYear(100);
+        date.setMonth(2);
+        date.setDate(12);
+        SearchGoodsForm form = new SearchGoodsForm(22,3,"新鲜葡萄",date,new Date(),13);
+        List<GoodsForm> goodsForms = goodsDao.selectManyByCondition(form);
+        System.out.println(goodsForms);
+    }
+
+    @Test
+    public void addLogistic() {
+        Logistic logistic = new Logistic();
+        logistic.setDate(new Date());
+        logistic.setExpressNumber("232142343");
+        long[] ids = {23,24};
+        logistic.setGoodsIds(ids);
+        logisticDao.addLogistic(logistic);
+    }
+    @Test
+    public void delete(){
+        long[] ids = {9,10};
+        logisticService.delete(ids);
     }
 
 }

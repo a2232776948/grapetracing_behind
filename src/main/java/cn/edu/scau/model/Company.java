@@ -3,15 +3,11 @@ package cn.edu.scau.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
+import org.springframework.stereotype.Component;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GoodsQRcode {
-    private long id;
-    private long areaId;
-    private long treeId;
-    private Date date;
+public class Company {
+    private String companyName;
 }

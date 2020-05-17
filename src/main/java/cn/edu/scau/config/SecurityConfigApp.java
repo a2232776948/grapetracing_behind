@@ -5,7 +5,6 @@ import cn.edu.scau.service.impl.UserService;
 import cn.edu.scau.util.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.*;
@@ -31,8 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+//@Configuration
+public class SecurityConfigApp extends WebSecurityConfigurerAdapter {
     @Autowired
     UserService userService;
 
@@ -58,14 +57,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
 //        web.ignoring().antMatchers("/login", "/css/**", "/js/**", "/index.html", "/img/**", "/fonts/**", "/favicon.ico", "/verifyCode", "/swagger-ui**", "**");
         web.ignoring()
-                .antMatchers("/login", "/css/**", "/js/**", "/index.html", "/dist/**","/img/**", "/fonts/**", "/favicon.ico", "/verifyCode","/area/**")
+                .antMatchers("/login", "/css/**", "/js/**", "/index.html", "/img/**", "/fonts/**", "/favicon.ico", "/verifyCode")
                 .and()
                 .ignoring()
                 .antMatchers("/swagger-ui.html")
                 .antMatchers("/webjars/**")
                 .antMatchers("/v2/**")
-                .antMatchers("/swagger-resources/**")
-                .antMatchers("/static/**");;
+                .antMatchers("/swagger-resources/**");
     }
 
     @Override
@@ -78,9 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-resources/configuration/ui",//用来获取支持的动作
                         "/swagger-resources",//用来获取api-docs的URL
                         "/swagger-resources/configuration/security",//安全选择
-                        "/swagger-ui.html",
-                        "/static/**","/css/**", "/js/**","/img/**", "/fonts/**", "/favicon.ico",
-                        "/index.html"
+                        "/swagger-ui.html"
                 ).permitAll()
 
                 // authenticate all other requests

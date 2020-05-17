@@ -6,6 +6,7 @@ import cn.edu.scau.model.TreeCategory;
 import cn.edu.scau.service.ITreeService;
 import cn.edu.scau.util.Response;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,6 +73,31 @@ public class TreeController {
         } catch (Exception e) {
             e.printStackTrace();
             return Response.error(e.getMessage());
+        }
+        return Response.ok("导出成功");
+    }
+
+    @ApiOperation("批量产生树二维码")
+    @ApiImplicitParam(name="ids" , value="树编号")
+    @RequestMapping(value = "addTreeQRcodes",method = RequestMethod.POST)
+    public Response<String> addTreeQRcodes(@RequestBody long[] ids){
+        String treeQRCodesUrl = "";
+        try {
+            treeQRCodesUrl = ITreeService.addTreeQRCodes(ids);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error("生成失败"+e.getMessage());
+        }
+        return Response.ok("生成成功",treeQRCodesUrl);
+    }
+
+    @ApiOperation("批量导出树二维码")
+    @RequestMapping(value = "getTreeQRcodes",method = RequestMethod.GET)
+    public Response getTreeQRcodes(String url,HttpServletResponse response) {
+        try {
+            ITreeService.getTreeQRCodes(url,response);
+        }catch (Exception e){
+            return Response.error("导出失败"+e.getMessage());
         }
         return Response.ok("导出成功");
     }

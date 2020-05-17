@@ -49,7 +49,7 @@ public class FarmOPController {
     @ApiOperation("按年份获取农事操作次数")
     @ApiImplicitParam(name = "year",example = "2019")
     @RequestMapping(value = "getYearFarmopCount",method = RequestMethod.GET)
-    public Response<List<YearFarmopCount>> getYearFarmopCount(long year){
+    public Response<List<YearFarmopCount>> getYearFarmopCount(@RequestParam long year){
         List<YearFarmopCount> yearFarmopCounts = farmOPServiceImpl.selectYearFarmopCount(year);
         return Response.ok("获取成功",yearFarmopCounts);
     }
@@ -64,7 +64,7 @@ public class FarmOPController {
            return Response.error("插入失败");
     }
 
-    @ApiOperation("通过地块添加农事操作")
+    @ApiOperation("通过植株添加农事操作")
     @PostMapping("/insertOneFarmopForTree")
     public Response addOneFarmopForTree(@RequestBody FarmOP farmOP){
         if(farmOPServiceImpl.addOneFarmopForTree(farmOP) == 1){

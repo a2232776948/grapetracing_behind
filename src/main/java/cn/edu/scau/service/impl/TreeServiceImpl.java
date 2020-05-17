@@ -2,6 +2,7 @@ package cn.edu.scau.service.impl;
 
 import cn.edu.scau.dao.AreaDao;
 import cn.edu.scau.dao.TreeDao;
+import cn.edu.scau.model.Company;
 import cn.edu.scau.model.SearchTreeForm;
 import cn.edu.scau.model.Tree;
 import cn.edu.scau.model.TreeCategory;
@@ -16,11 +17,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static cn.edu.scau.util.fileutil.ToZip.zipFile;
 
 @Service
 public class TreeServiceImpl implements ITreeService {
+    @Autowired
+    private Company company;
     @Autowired
     private TreeDao treeDao;
 
@@ -29,6 +36,15 @@ public class TreeServiceImpl implements ITreeService {
 
     @Autowired
     private FastDFSClientUtil dfsClient;
+
+    private String treeQrPath = getbaseURL()+"static/upload/qrimage/tree/";
+
+    public TreeServiceImpl() throws FileNotFoundException {
+    }
+
+    private String getbaseURL() throws FileNotFoundException {
+        return ResourceUtils.getURL("classpath:").getPath();
+    }
 
     @Override
     public List<Tree> getAllTrees() {
@@ -108,15 +124,44 @@ public class TreeServiceImpl implements ITreeService {
 
     @Override
     public boolean getTreeQRCode(long id, HttpServletResponse response) throws Exception {
+        String note = company.getCompanyName();
         String basePath = ResourceUtils.getURL("classpath:").getPath();
         String fullPath = basePath + "static/tree.jpg";
         String info = "treeId=" + String.valueOf(id);
         String target = basePath + "static/upload/qrimage/"+info+".jpg";
-        QRCodeUtil.encode(info,fullPath,target);
+        QRCodeUtil.encode(info,fullPath,target,note);
         File file = new File(target);
         FileUpload.fileUpload(response,target);
         file.deleteOnExit();
 
+        return true;
+    }
+
+    @Override
+    public String addTreeQRCodes(long[] ids) throws Exception {
+        String note = company.getCompanyName();
+        String basePath = ResourceUtils.getURL("classpath:").getPath();
+        String fullPath = basePath + "static/tree.jpg";
+        Date date = new Date();
+        String filePath = treeQrPath+ String.valueOf(date.getTime());
+        File file = new File(filePath);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        for(long id : ids){
+            String info = "treeId=" + String.valueOf(id);
+            String target = filePath+'/'+info+".jpg";
+            QRCodeUtil.encode(info,fullPath,target,note);
+        }
+        zipFile(filePath,filePath+".zip");
+        return filePath+".zip";
+    }
+
+    @Override
+    public boolean getTreeQRCodes(String url, HttpServletResponse response) {
+        FileUpload.fileUpload(response,url);
+        File file = new File(url);
+        file.deleteOnExit();
         return true;
     }
 }

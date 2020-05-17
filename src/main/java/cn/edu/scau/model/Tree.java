@@ -20,5 +20,6 @@ public class Tree {
     private String category;
     private Date plant_date;
     private String status;
+    private String hash;
     private int count = 1;
 }

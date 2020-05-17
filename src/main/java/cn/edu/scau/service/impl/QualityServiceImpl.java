@@ -2,6 +2,7 @@ package cn.edu.scau.service.impl;
 
 import cn.edu.scau.dao.QualityDao;
 import cn.edu.scau.model.Quality;
+import cn.edu.scau.model.SearchQualityForm;
 import cn.edu.scau.service.IQualityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,5 +50,15 @@ public class QualityServiceImpl implements IQualityService {
     @Override
     public List<Quality> getQualityByGoodsId(long id) {
         return qualityDao.getQualityByGoodsId(id);
+    }
+
+    @Override
+    public List<Quality> findQualities(SearchQualityForm form) {
+        return qualityDao.findQualities(form);
+    }
+
+    @Override
+    public List<String> getQualityCate() {
+        return qualityDao.getQualityCate();
     }
 }

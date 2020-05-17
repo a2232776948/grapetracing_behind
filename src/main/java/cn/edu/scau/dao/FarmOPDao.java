@@ -103,4 +103,8 @@ public interface FarmOPDao {
 
     @Select(" SELECT DATE_FORMAT(date,'%m') AS month,COUNT(*) count FROM farmop WHERE YEAR(date) = #{year} GROUP BY DATE_FORMAT(date,'%m')")
     List<YearFarmopCount> selectYearFarmopCount(long year);
+
+    @ResultMap("basemap")
+    @Select("select * from farmop where editable = #{editable}")
+    List<FarmOP> selectmanyByEditable(boolean editable);
 }

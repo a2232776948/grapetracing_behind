@@ -9,10 +9,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -52,18 +49,6 @@ public class AreaController {
         return Response.ok("修改成功");
     }
 
-    @ApiOperation("批量导出地块二维码")
-    @RequestMapping(value = "getAreaQRcodes",method = RequestMethod.GET)
-    public Response getAreaQRcodes( long[] ids, HttpServletResponse response) {
-        try {
-            IAreaService.getAreaQRCodes(ids,response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Response.error(e.getMessage());
-        }
-        return Response.ok("导出成功");
-    }
-
     @ApiOperation("导出某个地块二维码")
     @RequestMapping(value = "getAreaQRcode",method = RequestMethod.GET)
     public Response getAreaQRcode(long id, HttpServletResponse response) {
@@ -79,20 +64,26 @@ public class AreaController {
     @ApiOperation("批量产生地块二维码")
     @ApiImplicitParam(name="ids" , value="地块编号")
     @RequestMapping(value = "addAreaQRcodes",method = RequestMethod.POST)
-    public Response<String> addAreaQRcodes(long[] ids, HttpServletResponse response){
+    public Response<String> addAreaQRcodes(@RequestBody long[] ids){
+        String areaQRCodesUrl = "";
         try {
-            IAreaService.getAreaQRCodes(ids, response);
+            areaQRCodesUrl = IAreaService.addAreaQRCodes(ids);
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.error(e.getMessage());
+            return Response.error("生成失败"+e.getMessage());
         }
-        return Response.ok("导出成功");
+        return Response.ok("生成成功",areaQRCodesUrl);
     }
 
     @ApiOperation("批量导出地块二维码")
-    @RequestMapping(value = "getAreaQRcodes",method = RequestMethod.POST)
-    public Response getAreaQRcodes(long[] ids){
-        return Response.ok("");
+    @RequestMapping(value = "getAreaQRcodes",method = RequestMethod.GET)
+    public Response getAreaQRcodes(String url,HttpServletResponse response) {
+        try {
+            IAreaService.getAreaQRCodes(url,response);
+        }catch (Exception e){
+            return Response.error("导出失败"+e.getMessage());
+        }
+        return Response.ok("导出成功");
     }
 
 

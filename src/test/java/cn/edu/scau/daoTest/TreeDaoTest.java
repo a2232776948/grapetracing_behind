@@ -1,6 +1,7 @@
 package cn.edu.scau.daoTest;
 
 import cn.edu.scau.dao.MenuDao;
+import cn.edu.scau.dao.QualityDao;
 import cn.edu.scau.dao.TreeDao;
 import cn.edu.scau.dao.UserDao;
 import cn.edu.scau.model.*;
@@ -18,6 +19,9 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TreeDaoTest {
+
+    @Autowired
+    QualityDao qualityDao;
 
     @Autowired
     MenuDao menuDao;
@@ -117,4 +121,39 @@ public class TreeDaoTest {
             System.out.println(tree);
         }
     }
+
+    @Test
+    public void banTest(){
+        System.out.println("result="+(12 & 8));
+    }
+
+    @Test
+    public void findQualities(){
+        SearchQualityForm form = new SearchQualityForm();
+        form.setMode(10);
+        form.setGoods_id(23);
+        form.setUser_id(3);
+        List<Quality> qualities = qualityDao.findQualities(form);
+        System.out.println(qualities);
+    }
+
+    @Test
+    public void selectAllTest(){
+        Quality qualities = qualityDao.selectAllTest();
+        System.out.println(qualities);
+    }
+
+    @Test
+    public  void selectAll(){
+        List<Quality> qualities = qualityDao.selectAll();
+        System.out.println(qualities);
+    }
+
+    @Test
+    public  void selectOneById(){
+        Quality quality = qualityDao.selectOneById(2);
+        System.out.println(quality);
+    }
+
+
 }

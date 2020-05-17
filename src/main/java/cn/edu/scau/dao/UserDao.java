@@ -1,5 +1,6 @@
 package cn.edu.scau.dao;
 
+import cn.edu.scau.model.BlockChainAccount;
 import cn.edu.scau.model.Role;
 import cn.edu.scau.model.User;
 import org.apache.ibatis.annotations.*;
@@ -132,5 +133,8 @@ public interface UserDao {
     @Insert("insert into user(name, phone, age, detail, date, gender, username, password, userface, enabled, hash) " +
             "values(#{name}, #{phone}, #{age}, #{detail}, #{date, jdbcType=DATE}, #{gender}, #{username}, #{password}, #{userface}, #{enabled}, #{hash})")
     int insertUser(User user);
+
+    @Select("select user.hash, bcacc.password from user, bcacc where user.id = #{id} and user.hash = bcacc.hash")
+    BlockChainAccount selectBlockChainAccount(int id);
 
 }

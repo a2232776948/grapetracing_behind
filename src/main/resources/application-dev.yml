@@ -1,7 +1,7 @@
 spring:
   # 数据库信息配置
   datasource:
-    url: jdbc:mysql://localhost:3306/my_grape?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/my_grape0427?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     #url: jdbc:mysql://193.112.178.124:3306/my_grape?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123456

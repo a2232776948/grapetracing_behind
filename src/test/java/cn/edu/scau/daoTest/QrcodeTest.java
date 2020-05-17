@@ -79,6 +79,17 @@ public class QrcodeTest {
         System.out.println("fileUrl="+fileUrl);
     }
 
+    @Test
+    public void createQrcode4() throws Exception {
+        MultipartFile multipartFile = null;
+        //String basePath = ResourceUtils.getURL("classpath:").getPath();
+        String fullPath = "C:/Users/a2232776948/Pictures/262.jpg";
+        String targetPath = "C:/Users/a2232776948/Pictures/262_qrwithfont.jpg";
+        String info = "treeId=2" ;
+        String note = "珠海市斗门区xxx葡萄种植公司";
+        QRCodeUtil.encode(info,  fullPath, targetPath, note);
+    }
+
     //获取流文件
     private static void inputStreamToFile(InputStream ins, File file) {
         try {

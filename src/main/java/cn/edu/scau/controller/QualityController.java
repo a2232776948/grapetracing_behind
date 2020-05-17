@@ -1,6 +1,7 @@
 package cn.edu.scau.controller;
 
 import cn.edu.scau.model.Quality;
+import cn.edu.scau.model.SearchQualityForm;
 import cn.edu.scau.service.IQualityService;
 import cn.edu.scau.util.Response;
 import io.swagger.annotations.Api;
@@ -32,6 +33,13 @@ public class QualityController {
         return Response.ok("获取成功", qualityService.getAllQuality());
     }
 
+    @ApiOperation("获取所有质检分类")
+    @GetMapping("/getQualityCate")
+    public Response<String> getQualityCate(){
+        List<String> qualityCate = qualityService.getQualityCate();
+        return Response.ok("获取成功",qualityCate);
+    }
+
     @ApiOperation("删除一条或多条质检信息")
     @PostMapping("/remove")
     public Response remove(@RequestBody List<Long> ids){
@@ -61,5 +69,12 @@ public class QualityController {
     public Response<List<Quality>> getQualityByGoodsId(long id){
         List<Quality> qualityByGoodsId = qualityService.getQualityByGoodsId(id);
         return Response.ok("获取成功",qualityByGoodsId);
+    }
+
+    @ApiOperation("按条件搜索质检信息")
+    @PostMapping("findQualities")
+    public Response<List<Quality>> findQualities(@RequestBody SearchQualityForm form){
+        List<Quality> qualities = qualityService.findQualities(form);
+        return Response.ok("搜索成功",qualities);
     }
 }
