@@ -58,7 +58,7 @@
             <el-table-column
                     prop="hash"
                     label="hash"
-                    width="300">
+                    width="320">
             </el-table-column>
             <el-table-column
                     label="用户角色"

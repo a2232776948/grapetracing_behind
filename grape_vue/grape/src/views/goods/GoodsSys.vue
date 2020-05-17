@@ -1,16 +1,17 @@
 <template>
-    <div>
-        <div style="margin-top: 20px">
-            <div>
-                <span><i class="el-icon-s-grid"/>农事操作表</span>
-                <el-button size="mini" style="margin-left: 20px" @click="commandHandler('add')">添加记录</el-button>
-                <el-button size="mini" style="margin-left: 20px" @click="commandHandler('search')">搜索记录</el-button>
-                <el-button size="mini" style="margin-left: 20px" @click="commandHandler('delete')"
-                           v-if="this.multipleSelection.length !== 0">删除
-                </el-button>
-            </div>
-            <!--                        :data="tableData"-->
-            <div style="width: 981px; margin-top: 10px">
+    <div style="margin-top: 20px">
+        <div>
+            <span><i class="el-icon-s-grid"/>产品列表</span>
+            <el-button size="mini" @click="commandHandler('add')">添加产品</el-button>
+            <el-button size="mini" @click="commandHandler('search')" style="margin-left: 20px">搜索产品</el-button>
+            <el-button size="mini" style="margin-left: 20px"
+                       v-if="this.multipleSelection.length">删除
+            </el-button>
+            <el-button size="mini" @click="commandHandler('exportMany')" style="margin-left: 20px"
+                       v-if="this.multipleSelection.length">导出
+            </el-button>
+            <div style="width: 1070px; margin-top: 10px">
+                <!--                        :data="tableData"-->
                 <el-table
                         :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
                         border
@@ -20,61 +21,57 @@
                         element-loading-spinner="el-icon-loading"
                         element-loading-background="rgba(0, 0, 0, 0.8)"
                         @selection-change="handleSelectionChange">
+                    <el-table-column type="selection" width="50" :reserve-selection="true"/>
                     <el-table-column
-                            type="selection"
-                            width="40"
-                            :reserve-selection="true">
-                    </el-table-column>
-                    <el-table-column
-                            sortable
                             prop="id"
-                            label="编号"
-                            width="120">
+                            label="产品编号"
+                            width="100">
                     </el-table-column>
                     <el-table-column
-                            sortable
-                            prop="tree_id"
-                            label="树号"
-                            width="120">
+                            prop="treeId"
+                            label="植株编号"
+                            width="100">
                     </el-table-column>
                     <el-table-column
-                            prop="area_id"
-                            label="地块号"
-                            width="120">
+                            prop="areaId"
+                            label="地块编号"
+                            width="100">
                     </el-table-column>
                     <el-table-column
                             prop="category"
-                            label="农事种类"
-                            width="120">
+                            label="产品类型"
+                            width="150">
                     </el-table-column>
                     <el-table-column
                             prop="desc"
-                            label="具体操作"
-                            width="120">
+                            label="产品信息"
+                            width="150">
+                    </el-table-column>
+                    <el-table-column
+                            prop="trackingNumber"
+                            label="溯源码"
+                            width="170">
                     </el-table-column>
                     <el-table-column
                             prop="date"
-                            label="操作时间"
-                            width="120"
+                            label="生产日期"
+                            width="130"
                             :formatter="dataFormat">
                     </el-table-column>
                     <el-table-column
-                            prop="opperson"
-                            label="操作人"
-                            width="120">
-                    </el-table-column>
-                    <el-table-column
                             label="操作"
-                            width="100">
+                            width="120">
                         <template slot-scope="scope">
                             <el-button @click="commandHandler('delete', scope.row)" type="text" size="small">删除
                             </el-button>
-                            <el-button @click="commandHandler('edit', scope.row)" size="small" type="text">编辑
-                            </el-button>
+                            <el-tooltip class="item" effect="dark" content="导出二维码" placement="bottom" hide-after="1000">
+                                <el-button @click="commandHandler('export', scope.row)" type="text" size="small">导出
+                                </el-button>
+                            </el-tooltip>
                         </template>
                     </el-table-column>
                 </el-table>
-                <div style="display: flex;justify-content: center; margin-top: 5px">
+                <div style="display: flex;justify-content: center; margin-top: 5px;">
                     <el-pagination
                             background
                             @current-change="currentChange"
@@ -99,32 +96,27 @@
                     <el-radio v-model="radio" label="0">按地块</el-radio>
                     <el-radio v-model="radio" label="1">按植株</el-radio>
                 </el-form-item>
-                <el-form-item label="农事分类" label-width="80px">
+
+                <el-form-item label="产品分类" label-width="80px">
                     <el-select v-model="editform.category" placeholder="请选择" filterable allow-create>
                         <el-option
                                 v-for="(item, index) in categoryOps"
                                 :key="index"
-                                :label="item.category"
-                                :value="item.category">
+                                :label="item"
+                                :value="item">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="具体操作" label-width="80px">
+<!--                <el-form-item label="产品分类" label-width="80px">-->
+<!--                    <el-input v-model="editform.category" autocomplete="off"-->
+<!--                              :placeholder="editform.category"></el-input>-->
+<!--                </el-form-item>-->
+                <el-form-item label="描述" label-width="80px">
                     <el-input v-model="editform.desc" autocomplete="off"
                               :placeholder="editform.desc"></el-input>
                 </el-form-item>
-                <el-form-item label="操作人" label-width="80px">
-                    <el-select v-model="editform.user_id" filterable placeholder="请选择">
-                        <el-option
-                                v-for="item in userOPs"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
                 <el-form-item label="地块号" label-width="80px" v-if="radio === '0'">
-                    <el-select v-model="editform.area_id" filterable placeholder="请选择">
+                    <el-select v-model="editform.areaId" filterable placeholder="请选择">
                         <el-option
                                 v-for="item in areas"
                                 :key="item.id"
@@ -134,7 +126,10 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="树号" label-width="80px" v-if="radio > 0">
-                    <el-input v-model="editform.tree_id" autocomplete="off" :placeholder="editform.treeId"></el-input>
+                    <el-input v-model="editform.treeId" autocomplete="off" :placeholder="editform.treeId"></el-input>
+                </el-form-item>
+                <el-form-item label="数量" label-width="80px" >
+                    <el-input v-model="editform.count" autocomplete="off" :placeholder="editform.count"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -176,13 +171,13 @@
                 <el-form-item label="树号" label-width="80px">
                     <el-input v-model="searchForm.tree_id" autocomplete="off"  :disabled="checkList.indexOf('按植株') < 0"></el-input>
                 </el-form-item>
-                <el-form-item label="操作人" label-width="80px" >
-                    <el-select v-model="searchForm.user_id" filterable placeholder="请选择" :disabled="checkList.indexOf('按操作人') < 0">
+                <el-form-item label="分类" label-width="80px" >
+                    <el-select v-model="searchForm.category" filterable placeholder="请选择" :disabled="checkList.indexOf('按分类') < 0">
                         <el-option
-                                v-for="item in userOPs"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
+                                v-for="item in categoryOps"
+                                :key="item"
+                                :label="item"
+                                :value="item">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -192,49 +187,26 @@
                 <el-button type="primary" @click="submitform">搜 索</el-button>
             </div>
         </el-dialog>
+
     </div>
 </template>
 
 <script>
     export default {
-        name: "PlantSys",
+        name: "GoodsSys",
         data() {
             return {
-                categoryOps: [],
-                category: '',
-                treeIds: [],
-                treeId: '',
-                areas: [],
-                currentPage: 1,
-                pageSize: 10,
-                total: 0,
-                person: '',
-                tableData: [],
-                multipleSelection: [],
-                command: '',
-                userOPs: [],
+                command:'',
                 editDialog: false,
-                editDialogTitle: '',
-                radio: '0',
-                editform: {
-                    date: '',
-                    category: '',
-                    desc: '',
-                    opperson: '',
-                    area_id: '',
-                    tree_id: '',
-                    user_id: ''
-                },
-
                 searchDialog: false,
-                searchForm: {
-                    period: '',
-                    user_id: '',
-                    area_id: '',
-                    tree_id: '',
-                    mode:''
-                },
-                checkList: ['按时间'],
+                editDialogTitle: '',
+                categoryOps: [
+                     '新鲜葡萄'
+                ],
+                radio: '0',
+                categoryTableData: [],
+                checkList:['按时间'],
+                areas: [],
                 waitCheck: [
                     {
                         label: 1,
@@ -250,9 +222,38 @@
                     },
                     {
                         label: 4,
-                        value: '按操作人'
+                        value: '按分类'
                     }
-                ]
+                ],
+                editform: {
+                    categoryOps: [],
+                    date: '',
+                    category: ['新鲜葡萄'],
+                    desc: '',
+                    areaId:['1','2','3'],
+                    treeId: '',
+                    count: 1
+                },
+                searchForm:{
+                    period: '',
+                    area_id: '',
+                    tree_id: '',
+                    category: '',
+                    mode:''
+                 },
+                tableData: [{
+                    id: 1,
+                    treeId : 12,
+                    areaId: 2,
+                    category: '果汁',
+                    desc: '鲜榨果汁',
+                    trackingNumber: '100000000000001',
+                    date: '2019-09-05'
+                }],
+                currentPage: 1,
+                pageSize: 10,
+                total: 0,
+                multipleSelection: []
             }
         },
         mounted() {
@@ -260,18 +261,10 @@
         },
         methods: {
             init() {
-                //initTable
-                this.getRequest("/farmop/getAllOps").then(resp => {
+                this.getRequest('/goods/getGoodsForm').then(resp => {
                     if (resp) {
                         this.tableData = resp.result;
                         this.total = this.tableData.length;
-
-                    }
-                });
-
-                this.getRequest("/farmop/getAllFarmCate").then(resp => {
-                    if (resp) {
-                        this.categoryOps = resp.result;
                     }
                 });
                 this.getRequest('/area/getAllArea').then(resp => {
@@ -279,63 +272,105 @@
                         this.areas = resp.result;
                     }
                 });
-
-                this.getRequest('/user/getAllUsers').then(resp => {
+                this.getRequest("/goods/getCategory").then(resp => {
                     if (resp) {
-                        this.userOPs = resp.result;
+                        this.categoryOps = resp.result;
                     }
-                })
+                });
+                console.log("this.categoryOps");
+                console.log(this.categoryOps);
             },
             currentChange(currentPage) {
                 this.currentPage = currentPage;
-
             },
-            sizeChange(currentSize) {
-                this.pageSize = currentSize;
-
+            sizeChange(pageSize) {
+                this.pageSize = pageSize;
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+                console.log("val" + val);
+                console.log("multipleSelection" + this.multipleSelection);
+            },
+            downloadGoodsQrById(id){
+                const elink = document.createElement('a');
+                elink.download = "goodsId="+id+".jpg";
+                elink.style.display = 'none';
+                elink.href = '/goods/getGoodsQRcode?id='+id;
+                document.body.appendChild(elink);
+                elink.click();
+                URL.revokeObjectURL(elink.href);// 释放URL 对象
+                document.body.removeChild(elink)
+            },
+            downloadGoodsQrByIds(ids){
+                let url;
+                this.postJson('/goods/addGoodsQRcodes',ids).then(resp =>{
+                    url = resp.result;
+                    const elink = document.createElement('a');
+                    elink.download = "goods"+".zip";
+                    elink.style.display = 'none';
+                    elink.href = '/goods/getGoodsQRcodes?url='+url;
+                    document.body.appendChild(elink);
+                    elink.click();
+                    URL.revokeObjectURL(elink.href);// 释放URL 对象
+                    document.body.removeChild(elink)
+                });
             },
             commandHandler(cmd, row) {
                 this.command = cmd;
-                this.radio = "0";
-                this.category = this.categoryOps[0];
                 if (cmd === 'add') {
+                    this.title = '添加葡萄商品';
                     this.editDialog = true;
-                    this.editDialogTitle = "添加农事";
-                } else if (cmd === 'edit') {
-                    this.editDialogTitle = "修改农事";
+                } else  if(cmd === 'search'){
+                    this.title='搜所葡萄商品'
+                    this.searchDialog=true;
+                }else if (cmd === 'edit') {
+                    this.title = '修改葡萄商品信息';
+                    this.form.address = row.address;
+                    this.form.name = row.name;
+                    this.form.id = row.id;
+                    this.form.status = row.status;
                     this.editDialog = true;
-                    this.editform = JSON.parse(JSON.stringify(row));
-
                 } else if (cmd === 'delete') {
                     var ids = [];
                     if (row) {
-                        ids.push(row.id)
+                        ids.push(row.id);
                     } else {
                         this.multipleSelection.forEach(row => {
                             ids.push(row.id);
-                        });
+                        })
                     }
-                    this.postJson("/farmop/delete", ids).then(resp => {
+                    this.postJson("goods/deleteGoods", ids).then(resp => {
                         if (resp) {
-                            this.$message(resp.msg);
+                            this.$message.success(resp.msg);
                             this.init();
                         }
                     })
-                } else if (cmd === 'search') {
-                    this.searchDialog = true;
+                } else if (cmd === 'export') {
+                    this.downloadGoodsQrById(row.id);
+                    //this.$message("未接入接口");
+                }else if(cmd === 'exportMany'){
+                    var ids = [];
+                    if (row) {
+                        ids.push(row.id);
+                    } else {
+                        this.multipleSelection.forEach(row => {
+                            ids.push(row.id);
+                        })
+                    }
+                    this.downloadGoodsQrByIds(ids);
                 }
             },
             submitform() {
                 if (this.command === 'add') {
                     if (this.radio === '0') {
-                        this.postJson("/farmop/insertOneFarmopForArea", this.editform).then(resp => {
+                        this.postJson("/goods/addGoodsForArea", this.editform).then(resp => {
                             if (resp) {
                                 this.$message(resp.msg);
                                 this.init();
                             }
                         })
                     } else if (this.radio === '1') {
-                        this.postJson("/farmop/insertOneFarmopForTree", this.editform).then(resp => {
+                        this.postJson("/goods/addGoodsForTree", this.editform).then(resp => {
                             if (resp) {
                                 this.$message(resp.msg);
                                 this.init();
@@ -354,52 +389,19 @@
                     this.searchForm.start_date = this.searchForm.period[0];
                     this.searchForm.end_date = this.searchForm.period[1];
                     this.searchForm.mode = this.getMode();
-                    this.postJson("/farmop/findFarmOPs", this.searchForm).then(resp => {
+                    console.log("this.searchForm=");
+                    console.log(this.searchForm);
+                    this.postJson("/goods/findGoods", this.searchForm).then(resp => {
                         if (resp) {
                             this.$message(resp.msg);
                             this.tableData = resp.result;
                             this.total = this.tableData.length;
                             this.searchDialog = false;
+
                         }
                     });
                 }
                 this.command = '';
-            },
-            getMode() {
-                let mode = 0;
-                if (this.checkList.indexOf('按时间') > -1)
-                    mode += 1;
-                if (this.checkList.indexOf('按地块') > -1)
-                    mode += 2;
-                if (this.checkList.indexOf('按植株') > -1)
-                    mode += 4;
-                if (this.checkList.indexOf('按操作人') > -1)
-                    mode += 8;
-                return mode;
-            },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
-            },
-            closeHandler() {
-                this.editform = {
-                    farmopTime: '',
-                    farmcateName: '',
-                    farmopDes: '',
-                    opperson: '',
-                    areaId: '',
-                    treeId: '',
-                    user_id: ''
-                };
-                this.searchForm = {
-                    period: '',
-                    user_id: '',
-                    area_id: '',
-                    tree_id: '',
-                    mode:''
-                };
-            },
-            dataFormat(row, column, cellValue) {
-                return this.$moment(cellValue).format("YYYY-MM-DD");
             },
             selectedChange(val){
                 console.log(val);
@@ -412,13 +414,27 @@
                         this.checkList.splice(index1, 1);
                     }
                 }
+            },
+
+            getMode() {
+                let mode = 0;
+                if (this.checkList.indexOf('按时间') > -1)
+                    mode += 1;
+                if (this.checkList.indexOf('按地块') > -1)
+                    mode += 2;
+                if (this.checkList.indexOf('按植株') > -1)
+                    mode += 4;
+                if (this.checkList.indexOf('按操作人') > -1)
+                    mode += 8;
+                return mode;
+            },
+            dataFormat(row, column, cellValue) {
+                return this.$moment(cellValue).format("YYYY-MM-DD");
             }
         }
     }
 </script>
 
 <style scoped>
-    .el-dialog__body {
-        padding: 10px 20px;
-    }
+
 </style>

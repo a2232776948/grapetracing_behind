@@ -111,6 +111,59 @@
                 <el-button type="primary" @click="submitHandler">确 定</el-button>
             </div>
         </el-dialog>
+
+        <el-dialog title="搜索" :visible.sync="searchDialog" width="30%" @close="closeHandler">
+            <el-form :model="searchForm" label-position="left">
+                <el-form-item label="方式">
+                    <el-form :model="searchForm">
+                        <el-checkbox-group v-model="checkList" :min="1"  >
+                            <el-checkbox v-for="item in waitCheck" :label="item.value" :key="item.label"></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form>
+                </el-form-item>
+                <el-form-item label="时间段" label-width="80px" >
+                    <el-date-picker
+                            v-model="searchForm.period"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            style="width: 250px"
+                            :disabled="checkList.indexOf('按时间') < 0">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="商品编号" label-width="80px">
+                    <el-input v-model="searchForm.goods_id" filterable placeholder="请选择" :disabled="checkList.indexOf('按商品') < 0">
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="分类" label-width="80px" >
+                    <el-select v-model="searchForm.category" filterable placeholder="请选择" :disabled="checkList.indexOf('按分类') < 0">
+                        <el-option
+                                v-for="item in categoryOps"
+                                :key="item"
+                                :label="item"
+                                :value="item">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="质检人" label-width="80px">
+                    <el-select v-model="searchForm.user_id" autocomplete="off"  :disabled="checkList.indexOf('按质检人') < 0">
+                        <el-option
+                                v-for="item in userOPs"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="searchDialog = false">取 消</el-button>
+                <el-button type="primary" @click="submitHandler">搜 索</el-button>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -126,8 +179,29 @@
                 multipleSelection: [],
                 command: "",
                 userOPs: [],
+                categoryOps:[],
                 editDialog: false,
                 editDialogTitle: '',
+                searchDialog: false,
+                checkList: ['按时间'],
+                waitCheck: [
+                    {
+                        label: 1,
+                        value: '按时间'
+                    },
+                    {
+                        label: 2,
+                        value: '按商品'
+                    },
+                    {
+                        label: 3,
+                        value: '按分类'
+                    },
+                    {
+                        label: 4,
+                        value: '按质检人'
+                    }
+                ],
                 editform: {
                     id: '',
                     goods_id: '',
@@ -136,6 +210,13 @@
                     date: '',
                     user_id: '',
                     opperson: ''
+                },
+                searchForm:{
+                    period: '',
+                    goods_id: '',
+                    user_id: '',
+                    category: '',
+                    mode:''
                 },
                 keywords: ''
             }
@@ -149,12 +230,19 @@
                     if (resp) {
                         this.tableData = resp.result;
                         this.total = this.tableData.length;
+                        console.log("resp.result");
+                        console.log(resp.result);
                         this.$message(resp.msg);
                     }
                 });
                 this.getRequest('/user/getAllUsers').then(resp => {
                     if (resp) {
                         this.userOPs = resp.result;
+                    }
+                })
+                this.getRequest('/quality/getQualityCate').then(resp => {
+                    if (resp) {
+                        this.categoryOps = resp.result;
                     }
                 })
             },
@@ -182,13 +270,17 @@
                     this.editDialogTitle = '修改质检信息';
                     this.editform = JSON.parse(JSON.stringify(row));
                     this.editDialog = true;
-                } else if (this.command === 'search') {
-                    this.getRequest("/quality/getQualityById?id=" + this.keywords).then(resp => {
-                        if (resp) {
-                            this.tableData = resp.result;
-                            this.total = this.tableData.length;
-                        }
-                    });
+                }
+                // else if (this.command === 'search') {
+                //     this.getRequest("/quality/getQualityById?id=" + this.keywords).then(resp => {
+                //         if (resp) {
+                //             this.tableData = resp.result;
+                //             this.total = this.tableData.length;
+                //         }
+                //     });
+                // }
+                else if (this.command === 'search') {
+                    this.searchDialog = true;
                 }
             },
             submitHandler() {
@@ -208,7 +300,36 @@
                         }
                     });
                     this.editDialog = false;
+                }else if (this.command === 'search') {
+                    this.searchForm.start_date = this.searchForm.period[0];
+                    this.searchForm.end_date = this.searchForm.period[1];
+                    this.searchForm.mode = this.getMode();
+                    console.log("searchForm");
+                    console.log(this.searchForm);
+                    this.postJson("/quality/findQualities", this.searchForm).then(resp => {
+                        if (resp) {
+                            console.log("/quality/findQualities resp.msp");
+                            console.log(resp.result);
+                            this.$message(resp.msg);
+                            this.tableData = resp.result;
+                            this.total = this.tableData.length;
+                            this.searchDialog = false;
+                        }
+                    });
                 }
+                this.command = '';
+            },
+            getMode() {
+                let mode = 0;
+                if (this.checkList.indexOf('按时间') > -1)
+                    mode += 1;
+                if (this.checkList.indexOf('按商品') > -1)
+                    mode += 2;
+                if (this.checkList.indexOf('按分类') > -1)
+                    mode += 4;
+                if (this.checkList.indexOf('按质检人') > -1)
+                    mode += 8;
+                return mode;
             },
             currentChange(currentPage) {
                 this.currentPage = currentPage;

@@ -54,6 +54,8 @@ export const formatRoutes = (routes) => {
                     require(['../views/sys/' + component + '.vue'], resolve);
                 } else if (component.startsWith("GoodsSys")){
                     require(['../views/goods/' + component + '.vue'],resolve);
+                } else if(component.startsWith("StatisticsSys")){
+                    require(['../views/statistics/' + component + '.vue'],resolve);
                 }
             }
         };

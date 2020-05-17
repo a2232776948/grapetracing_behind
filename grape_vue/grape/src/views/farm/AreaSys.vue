@@ -6,6 +6,9 @@
             <el-button size="mini" @click="commandHandler('delete')" style="margin-left: 20px"
                        v-if="this.multipleSelection.length">删除
             </el-button>
+            <el-button size="mini" @click="commandHandler('exportMany')" style="margin-left: 20px"
+                       v-if="this.multipleSelection.length">导出
+            </el-button>
             <div style="width: 1070px; margin-top: 10px">
                 <!--                        :data="tableData"-->
                 <el-table
@@ -129,7 +132,36 @@
             sizeChange(pageSize) {
                 this.pageSize = pageSize;
             },
+            downloadAreaQrById(id){
+                const elink = document.createElement('a');
+                elink.download = "areaId="+id+".jpg";
+                elink.style.display = 'none';
+                elink.href = '/area/getAreaQRcode?id='+id;
+                document.body.appendChild(elink);
+                elink.click();
+                URL.revokeObjectURL(elink.href);// 释放URL 对象
+                document.body.removeChild(elink)
+            },
+            downloadGoodsQrByIds(ids){
+                var url = '';
+                this.postJson("/area/addAreaQRcodes",ids).then(resp => {
+                    if (resp) {
+                        url = resp.result;
+                        this.$message.success(resp.msg);
+                        console.log('url='+url);
+                        const elink = document.createElement('a');
+                        elink.download = "area"+".zip";
+                        elink.style.display = 'none';
+                        elink.href = '/area/getAreaQRcodes?url='+url;
+                        document.body.appendChild(elink);
+                        elink.click();
+                        URL.revokeObjectURL(elink.href);// 释放URL 对象
+                        document.body.removeChild(elink)
+                    }
+                });
+            },
             commandHandler(cmd, row) {
+                let ids;
                 this.command = cmd;
                 if (cmd === 'add') {
                     this.title = '添加农田';
@@ -142,7 +174,7 @@
                     this.form.status = row.status;
                     this.dialogVisible = true;
                 } else if (cmd === 'delete') {
-                    var ids = [];
+                    ids = [];
                     if (row) {
                         ids.push(row.id);
                     } else {
@@ -157,7 +189,21 @@
                         }
                     })
                 } else if (cmd === 'export') {
-                    this.$message("未接入接口");
+                    this.downloadAreaQrById(row.id);
+                    //this.$message("未接入接口");
+                }else if (cmd === 'exportMany') {
+                    ids = [];
+                    if (row) {
+                        ids.push(row.id);
+                    } else {
+                        this.multipleSelection.forEach(row => {
+                            ids.push(row.id);
+                        })
+                    }
+                    this.downloadGoodsQrByIds(ids);
+                    //this.test1(ids);
+                    //this.test2();
+                    //this.$message("未接入接口");
                 }
             },
             submit() {

@@ -15,6 +15,9 @@
                 <el-button size="mini" style="margin-left: 20px" @click="commanderHandler('deletePlant')"
                            v-if="this.multipleSelection.length !== 0">删除植株
                 </el-button>
+                <el-button size="mini" style="margin-left: 20px" @click="commanderHandler('exportMany')"
+                           v-if="this.multipleSelection.length !== 0">导出
+                </el-button>
                 <!--                <el-button size="mini" style="margin-left: 20px" @click="commanderHandler('addCategory')"
                                            v-if="tabPosition === 'right'">添加种类
                                 </el-button>-->
@@ -72,6 +75,10 @@
                             </el-button>
                             <el-button @click="commanderHandler('editPlant', scope.row)" type="text" size="small">编辑
                             </el-button>
+                            <el-tooltip class="item" effect="dark" content="导出二维码" placement="bottom" hide-after="1000">
+                                <el-button @click="commanderHandler('export',scope.row)" type="text" size="small">导出
+                                </el-button>
+                            </el-tooltip>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -303,6 +310,34 @@
             sizeChange(pageSize) {
                 this.pageSize = pageSize;
             },
+            downloadTreeQrById(id){
+                const elink = document.createElement('a');
+                elink.download = "treeId="+id+".jpg";
+                elink.style.display = 'none';
+                elink.href = '/tree/getTreeQRcode?id='+id;
+                document.body.appendChild(elink);
+                elink.click();
+                URL.revokeObjectURL(elink.href);// 释放URL 对象
+                document.body.removeChild(elink)
+            },
+            downloadTreeQrByIds(ids){
+                var url = '';
+                this.postJson("/tree/addTreeQRcodes",ids).then(resp => {
+                    if (resp) {
+                        url = resp.result;
+                        this.$message.success(resp.msg);
+                        console.log('url='+url);
+                        const elink = document.createElement('a');
+                        elink.download = "tree"+".zip";
+                        elink.style.display = 'none';
+                        elink.href = '/tree/getTreeQRcodes?url='+url;
+                        document.body.appendChild(elink);
+                        elink.click();
+                        URL.revokeObjectURL(elink.href);// 释放URL 对象
+                        document.body.removeChild(elink)
+                    }
+                });
+            },
             commanderHandler(cmd, row) {
                 this.command = cmd;
                 if (cmd === 'searchPlant') {
@@ -341,13 +376,27 @@
                     this.$message("未接入接口");
                 } else if (cmd === 'editCategory') {
                     this.$message("未接入接口");
+                }else if(cmd === 'export'){
+                    this.downloadTreeQrById(row.id);
+                }else if(cmd === 'exportMany'){
+                    ids = [];
+                    if (row) {
+                        ids.push(row.id);
+                    } else {
+                        this.multipleSelection.forEach(row => {
+                            ids.push(row.id);
+                        })
+                    }
+                    this.downloadTreeQrByIds(ids);
                 }
+
             },
             submitHandler() {
                 if (this.command === 'searchPlant') {
                     this.searchForm.start_date = this.searchForm.period[0];
                     this.searchForm.end_date = this.searchForm.period[1];
                     this.searchForm.mode = this.getMode();
+                    console.log('this.searchForm=');
                     console.log(this.searchForm);
                     this.postJson("/tree/findTrees", this.searchForm).then(resp => {
                         if (resp) {
@@ -373,7 +422,7 @@
                             this.init();
                         }
                     })
-                } else if (this.command === 'addCategory') {
+                } /*else if (this.command === 'addCategory') {
                     this.postJson("/addTreeCate", this.categoryForm.categoryName).then(resp => {
                         if (resp) {
                             this.$message.success("添加成功");
@@ -384,7 +433,7 @@
                             this.$message.error("添加失败");
                         }
                     })
-                }
+                }*/
             },
             getMode(){
                 var mode = 0;

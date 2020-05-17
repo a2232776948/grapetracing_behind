@@ -10,10 +10,13 @@ import store from "@/store";
 
 import {postJson, postRequest, postKeyValueRequest, putRequest, deleteRequest, getRequest} from "./utils/api";
 import moment from "moment";
+import echarts from 'echarts'
 
 
 Vue.use(ElementUI, {size: 'small'});
 Vue.config.productionTip = false;
+
+Vue.prototype.$echarts = echarts;
 
 Vue.prototype.postRequest = postRequest;
 Vue.prototype.postKeyValueRequest = postKeyValueRequest;
