@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,13 +38,17 @@ public class TreeServiceImpl implements ITreeService {
     @Autowired
     private FastDFSClientUtil dfsClient;
 
-    private String treeQrPath = getbaseURL()+"static/upload/qrimage/tree/";
-
     public TreeServiceImpl() throws FileNotFoundException {
     }
 
-    private String getbaseURL() throws FileNotFoundException {
-        return ResourceUtils.getURL("classpath:").getPath();
+    private String getBasePath(){
+        String areaQrPath = "";
+        try{
+            areaQrPath = QRCodeUtil.getbaseURL()+"/static/upload/qrimage/tree/";
+        }catch (Exception e){
+            System.out.println("QRCodeUtil.getbaseURL()在测试环境无效");
+        }
+        return areaQrPath;
     }
 
     @Override
@@ -125,11 +130,10 @@ public class TreeServiceImpl implements ITreeService {
     @Override
     public boolean getTreeQRCode(long id, HttpServletResponse response) throws Exception {
         String note = company.getCompanyName();
-        String basePath = ResourceUtils.getURL("classpath:").getPath();
-        String fullPath = basePath + "static/tree.jpg";
+        InputStream image = this.getClass().getResourceAsStream("/static/tree.jpg");
         String info = "treeId=" + String.valueOf(id);
-        String target = basePath + "static/upload/qrimage/"+info+".jpg";
-        QRCodeUtil.encode(info,fullPath,target,note);
+        String target = getBasePath() + "static/upload/qrimage/"+info+".jpg";
+        QRCodeUtil.encode(info,image,target,note);
         File file = new File(target);
         FileUpload.fileUpload(response,target);
         file.deleteOnExit();
@@ -140,18 +144,17 @@ public class TreeServiceImpl implements ITreeService {
     @Override
     public String addTreeQRCodes(long[] ids) throws Exception {
         String note = company.getCompanyName();
-        String basePath = ResourceUtils.getURL("classpath:").getPath();
-        String fullPath = basePath + "static/tree.jpg";
         Date date = new Date();
-        String filePath = treeQrPath+ String.valueOf(date.getTime());
+        String filePath = getBasePath()+ String.valueOf(date.getTime());
         File file = new File(filePath);
         if(!file.exists()){
             file.mkdirs();
         }
         for(long id : ids){
+            InputStream image = this.getClass().getResourceAsStream("/static/tree.jpg");
             String info = "treeId=" + String.valueOf(id);
             String target = filePath+'/'+info+".jpg";
-            QRCodeUtil.encode(info,fullPath,target,note);
+            QRCodeUtil.encode(info,image,target,note);
         }
         zipFile(filePath,filePath+".zip");
         return filePath+".zip";

@@ -32,6 +32,7 @@ public class MenuServiceImpl implements IMenuService {
         return menus;
     }
 
+
     @Cacheable
     public List<Menu> getAllMenusWithRole() {
         return menuDao.getAllMenusWithRole();
@@ -53,5 +54,14 @@ public class MenuServiceImpl implements IMenuService {
         }
         Integer result = menuRoleDao.insertRecord(rid, mids);
         return result == mids.length;
+    }
+
+    @Override
+    public List<Menu> getMenuByUserId2(Integer userId) {
+        List<Menu> menus = menuDao.getMenusByUserId(userId);
+        for (Menu menu : menus) {
+            menu.setChildren(menuDao.selectMenusByParentIdAndUserId(menu.getId(), userId));
+        }
+        return menus;
     }
 }

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,7 +49,7 @@ public class GoodsServiceImpl implements IGoodsService {
     private String getBasePath(){
         String areaQrPath = "";
         try{
-            areaQrPath = QRCodeUtil.getbaseURL()+"static/upload/qrimage/goods/";
+            areaQrPath = QRCodeUtil.getbaseURL()+"/static/upload/qrimage/goods/";
         }catch (Exception e){
             System.out.println("QRCodeUtil.getbaseURL()在测试环境无效");
         }
@@ -128,18 +129,14 @@ public class GoodsServiceImpl implements IGoodsService {
     public boolean getGoodsQRcode(long id, HttpServletResponse response) throws Exception {
         String note = company.getCompanyName();
         String goodsQrPath = getBasePath();
-        String basePath = ResourceUtils.getURL("classpath:").getPath();;
-        String fullPath = basePath + "static/goods.jpg";
+        InputStream image = this.getClass().getResourceAsStream("/static/goods.jpg");
         Date date = new Date();
         String filePath = goodsQrPath+ String.valueOf(date.getTime());
         String info = "goods=" + String.valueOf(id);
-        //String target = goodsQrPath+info+".jpg";
         String target = filePath+'/'+info+".jpg";
-        QRCodeUtil.encode(info,fullPath,target,note);
-        File file = new File(target);
+        QRCodeUtil.encode(info,image,target,note);
         FileUpload.fileUpload(response,target);
-        file.deleteOnExit();
-
+        System.out.println("target:"+target);
         return true;
     }
 
@@ -147,8 +144,6 @@ public class GoodsServiceImpl implements IGoodsService {
     public String addGoodsQRcodes(long[] ids) throws Exception {
         String note = company.getCompanyName();
         String goodsQrPath = getBasePath();
-        String basePath = ResourceUtils.getURL("classpath:").getPath();
-        String fullPath = basePath + "static/goods.jpg";
         Date date = new Date();
         String filePath = goodsQrPath+ String.valueOf(date.getTime());
         File file = new File(filePath);
@@ -156,9 +151,10 @@ public class GoodsServiceImpl implements IGoodsService {
             file.mkdirs();
         }
         for(long id : ids){
+            InputStream image = this.getClass().getResourceAsStream("/static/goods.jpg");
             String info = "goodsId=" + String.valueOf(id);
             String target = filePath+'/'+info+".jpg";
-            QRCodeUtil.encode(info,fullPath,target,note);
+            QRCodeUtil.encode(info,image,target,note);
         }
         zipFile(filePath,filePath+".zip");
         return filePath+".zip";
@@ -167,8 +163,6 @@ public class GoodsServiceImpl implements IGoodsService {
     @Override
     public boolean getGoodsQRCodes(String url, HttpServletResponse response) throws Exception {
         FileUpload.fileUpload(response,url);
-        File file = new File(url);
-        file.deleteOnExit();
         return true;
     }
 

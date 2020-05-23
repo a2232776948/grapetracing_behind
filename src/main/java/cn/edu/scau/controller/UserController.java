@@ -102,10 +102,20 @@ public class UserController {
          return Response.ok("查找成功", user);
     }
 
-    @ApiOperation("更改头像 暂时不可用")
+
+    @ApiOperation("app获取当前登录用户信息")
+    @GetMapping("/infoApp")
+    public Response<User> infoApp(String username) {
+        User user = userService.getUserByName(username);
+        //user.setUserface(reqBaseUrl+'/'+user.getUserface());
+        return Response.ok("查找成功", user);
+    }
+
+    @ApiOperation("更改头像")
     @PostMapping("/userface")
     public Response updateUserface(@RequestBody MultipartFile file, Authentication authentication) {
         String fileUrl = "";
+        System.out.println("fileType:"+file.getContentType());
         try {
             fileUrl = dfsClient.uploadFile(file);
             System.out.println("fileUrl:"+fileUrl);
@@ -113,30 +123,30 @@ public class UserController {
             e.printStackTrace();
         }
         User user = (User) authentication.getPrincipal();
-        int i = fileUrl.indexOf("group"); // 获得路径中group出现的位置
-        fileUrl = fileUrl.substring(i);
+//        int i = fileUrl.indexOf("group"); // 获得路径中group出现的位置
+//        fileUrl = fileUrl.substring(i);
         System.out.println(fileUrl);
         userService.updateUserface(user.getId(),fileUrl);
         return Response.ok("修改成功");
     }
 
-    @ApiOperation("更改头像 暂时不可用")
-    @PostMapping("/userface1")
-    public Response updateUserface(@RequestBody MultipartFile file,int i, Authentication authentication) {
-        int n;
-        String name = file.getName();
-        File file1 = new File(name);
-        try (InputStream inputStream = file.getInputStream(); FileOutputStream outputStream = new FileOutputStream(file1)) {
-            byte[] bytes = new byte[4096];
-            while ((n = inputStream.read(bytes, 0, 4096)) != -1) {
-                outputStream.write(bytes, 0, n);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        byte[] buffer = new byte[4096];
-        return Response.ok("修改成功");
-    }
+//    @ApiOperation("更改头像 暂时不可用")
+//    @PostMapping("/userface1")
+//    public Response updateUserface(@RequestBody MultipartFile file,int i, Authentication authentication) {
+//        int n;
+//        String name = file.getName();
+//        File file1 = new File(name);
+//        try (InputStream inputStream = file.getInputStream(); FileOutputStream outputStream = new FileOutputStream(file1)) {
+//            byte[] bytes = new byte[4096];
+//            while ((n = inputStream.read(bytes, 0, 4096)) != -1) {
+//                outputStream.write(bytes, 0, n);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        byte[] buffer = new byte[4096];
+//        return Response.ok("修改成功");
+//    }
 
     @ApiOperation("更新用户信息")
     @PostMapping("/update")

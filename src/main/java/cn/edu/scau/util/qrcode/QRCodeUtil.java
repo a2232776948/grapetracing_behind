@@ -130,7 +130,7 @@ public class QRCodeUtil {
         }
         Graphics g1 = tag.getGraphics();//设置低栏白边
         Graphics2D g2 = tag.createGraphics();//设置文字
-        Font font = new Font("微软雅黑", Font.BOLD,18);
+        Font font = new Font("宋体", Font.BOLD,18);
         g2.setFont(font);
         g2.setColor(Color.BLACK);
         if (note.length()<=16) {

@@ -70,7 +70,7 @@ public interface TreeDao {
             @Result(property = "area_id", column = "area_id")
 
     })
-    @Select("select tree.id as id, area_id, area.name as name, category, plant_date, tree.status " +
+    @Select("select tree.id as id, area_id, area.name as name, category, plant_date, tree.status ,tree.hash " +
             "from tree join area on tree.area_id = area.id " +
             "where tree.id = #{id}")
     Tree selectTreeById(long id);

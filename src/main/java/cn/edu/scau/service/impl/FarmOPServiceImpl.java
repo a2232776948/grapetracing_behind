@@ -45,6 +45,7 @@ public class FarmOPServiceImpl implements IFarmOPService {
         int success = 0;
         for (Tree tree : trees) {
             farmOP.setTree_id(tree.getId());
+            farmOP.setEditable(true);
             success += farmOPDao.insertOneFarmop(farmOP);
         }
         return success == trees.size();
@@ -52,6 +53,7 @@ public class FarmOPServiceImpl implements IFarmOPService {
 
     public int addOneFarmopForTree(FarmOP farmOP) {
         farmOP.setArea_id(treeDao.selectTreeById(farmOP.getTree_id()).getArea_id());
+        farmOP.setEditable(true);
         return farmOPDao.insertOneFarmop(farmOP);
     }
 

@@ -35,10 +35,10 @@ public interface FarmOPDao {
     @Select("select distinct category from farmop")
     List<FarmOPCategory> selectAllFarmCate();
 
-    @Insert("insert into farmop(tree_id, area_id, category, farmop.desc, date, user_id) values(#{tree_id}, #{area_id}, #{category}, #{desc}, #{date, jdbcType=DATE}, #{user_id})")
+    @Insert("insert into farmop(tree_id, area_id, category, farmop.desc, date, user_id, editable) values(#{tree_id}, #{area_id}, #{category}, #{desc}, #{date, jdbcType=DATE}, #{user_id},#{editable})")
     int insertOneFarmop(FarmOP farmOP);
 
-    @Update("update farmop set category = #{category}, farmop.desc = #{desc}, date = #{date, jdbcType=DATE}, user_id = #{user_id} where tree_id = #{tree_id}")
+    @Update("update farmop set category = #{category}, farmop.desc = #{desc}, date = #{date, jdbcType=DATE}, user_id = #{user_id} ,editable=#{editable} where tree_id = #{tree_id}")
     int updateOne(FarmOP farmOP);
 
     @Delete("delete from farmop where id = #{id}")

@@ -19,7 +19,7 @@ import static org.web3j.tx.Contract.GAS_LIMIT;
 import static org.web3j.tx.ManagedTransaction.GAS_PRICE;
 
 @Service
-public class GethClient {
+public class  GethClient {
     private Admin admin;
     private Geth geth;
 
@@ -114,7 +114,7 @@ public class GethClient {
     }
 
     public String sendTransaction(String from, String to, BigInteger value) throws IOException {
-        PersonalUnlockAccount personalUnlockAccount = admin.personalUnlockAccount(accounts().get(0), "").send();
+        PersonalUnlockAccount personalUnlockAccount = admin.personalUnlockAccount(accounts().get(0), "123456").send();
         if (personalUnlockAccount.accountUnlocked()) {
             //nonce
             EthGetTransactionCount ethGetTransactionCount = admin

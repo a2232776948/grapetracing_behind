@@ -58,7 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
 //        web.ignoring().antMatchers("/login", "/css/**", "/js/**", "/index.html", "/img/**", "/fonts/**", "/favicon.ico", "/verifyCode", "/swagger-ui**", "**");
         web.ignoring()
-                .antMatchers("/login", "/css/**", "/js/**", "/index.html", "/dist/**","/img/**", "/fonts/**", "/favicon.ico", "/verifyCode","/area/**")
+                .antMatchers("/login", "/css/**", "/js/**", "/index.html","/index2.html" ,"/dist/**","/img/**", "/fonts/**", "/favicon.ico", "/verifyCode",
+                        "/area/**","/farmop/**","/blockchain/**","/tree/**","/logistic/**","/user/**","/goods/**","/quality/**")
                 .and()
                 .ignoring()
                 .antMatchers("/swagger-ui.html")

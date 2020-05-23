@@ -10,6 +10,14 @@ import org.springframework.context.annotation.Configuration;
 public class CompanyConfig {
     @Autowired
     private CompanyDao companyDao;
+    public String verifCode;
+
+    public void setVerifCode(String verifCode) {
+        this.verifCode = verifCode;
+    }
+    public String getVerifCode(){
+        return verifCode;
+    }
 
     @Bean
     public Company company(){

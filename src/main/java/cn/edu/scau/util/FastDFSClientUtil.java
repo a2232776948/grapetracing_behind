@@ -40,6 +40,8 @@ public class FastDFSClientUtil {
         return getResAccessUrl(storePath);
     }
 
+
+
     public void delFile(String filePath) {
         storageClient.deleteFile(filePath);
 

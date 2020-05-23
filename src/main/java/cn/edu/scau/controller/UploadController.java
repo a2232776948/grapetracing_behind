@@ -18,7 +18,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-@Api("测试用")
+@Api(tags = "测试用")
 @RestController
 @RequestMapping("/upload")
 public class UploadController {

@@ -106,6 +106,19 @@ public class TreeDaoTest {
     }
 
     @Test
+    public void addOneFarmopForTree(){
+        FarmOP farmOP = new FarmOP();
+        farmOP.setTree_id(29);
+        farmOP.setUser_id(3);
+        farmOP.setDate(new Date());
+        farmOP.setCategory("施肥");
+        farmOP.setDesc("钾肥5kg");
+        int b = farmOPServiceImpl.addOneFarmopForTree(farmOP);
+        System.out.println(b);
+    }
+
+
+    @Test
     public void selectTreeById(){
         Tree tree = treeDao.selectTreeById(29);
         System.out.println(tree);

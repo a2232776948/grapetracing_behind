@@ -44,7 +44,7 @@ public class AreaServiceImpl implements IAreaService {
     private String getBasePath(){
         String areaQrPath = "";
         try{
-            areaQrPath = QRCodeUtil.getbaseURL()+"static/upload/qrimage/area/";
+            areaQrPath = QRCodeUtil.getbaseURL()+"/static/upload/qrimage/area/";
         }catch (Exception e){
             System.out.println("QRCodeUtil.getbaseURL()在测试环境无效");
         }
@@ -103,8 +103,6 @@ public class AreaServiceImpl implements IAreaService {
     public String addAreaQRCodes(long[] ids) throws Exception {
         String areaQrPath = getBasePath();
         String note = company.getCompanyName();
-        String basePath = ResourceUtils.getURL("classpath:").getPath();
-        String fullPath = basePath + "static/area.jpg";
         Date date = new Date();
         String filePath = areaQrPath+ String.valueOf(date.getTime());
         File file = new File(filePath);
@@ -112,9 +110,10 @@ public class AreaServiceImpl implements IAreaService {
             file.mkdirs();
         }
         for(long id : ids){
+            InputStream image = this.getClass().getResourceAsStream("/static/area.jpg");
             String info = "areaId=" + String.valueOf(id);
             String target = filePath+'/'+info+".jpg";
-            QRCodeUtil.encode(info,fullPath,target,note);
+            QRCodeUtil.encode(info,image,target,note);
         }
         zipFile(filePath,filePath+".zip");
         //FileUpload.fileUpload(response,basePath+"static/upload/qrimage.zip");
@@ -168,20 +167,16 @@ public class AreaServiceImpl implements IAreaService {
 //        file.deleteOnExit();
 //        return true;
 //    }
-public boolean getAreaQRCode(long id,HttpServletResponse response) throws Exception {
-    String areaQrPath = getBasePath();
-    String note = company.getCompanyName();
+    public boolean getAreaQRCode(long id,HttpServletResponse response) throws Exception {
+        String areaQrPath = getBasePath();
+        String note = company.getCompanyName();
 
-    ResourceLoader resourceLoader = new DefaultResourceLoader();
-    InputStream inputStream = resourceLoader.getResource("classpath:/static/area.jpg").getInputStream();
-    String info = "areaId=" + String.valueOf(id);
-    String target = areaQrPath+info+".jpg";
-    File file = new File(target);
-    QRCodeUtil.encode(info,inputStream,target,note);
-    FileUpload.fileUpload(response,target);
-    inputStream.close();
-    file.deleteOnExit();
-    return true;
-}
+        InputStream image = this.getClass().getResourceAsStream("/static/area.jpg");
+        String info = "areaId=" + String.valueOf(id);
+        String target = areaQrPath+info+".jpg";
+        QRCodeUtil.encode(info,image,target,note);
+        FileUpload.fileUpload(response,target);
+        return true;
+    }
 
 }

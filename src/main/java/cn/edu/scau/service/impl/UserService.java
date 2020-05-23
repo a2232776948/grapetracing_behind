@@ -40,6 +40,12 @@ public class UserService implements UserDetailsService {
         return userRoleDao.addRole(userId, rids) == rids.length;
     }
 
+
+    public User getUserByName(String name){
+        User user = userDao.loadUserByUsername(name);
+        return user;
+    }
+
     public Integer deleteByUserId(Integer id) {
         return userDao.deleteByPrimaryKey(id);
     }
